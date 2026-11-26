@@ -22,6 +22,24 @@ namespace {
 	}
 }
 
+QFE::ANIMATION::AnimationClip QFE::FRAMEWORK::CreateAnimationClip(const std::string& name, bool loop) {
+	ANIMATION::AnimationClip clip;
+	clip.SetName(name);
+	clip.SetLoop(loop);
+	return clip;
+}
+
+void QFE::FRAMEWORK::AddAnimationKeyFrame(ANIMATION::AnimationClip& clip, const ANIMATION::AnimationKeyFrame& keyFrame) {
+	// 時刻順への挿入をモジュールに任せ、読み込みや再生時と同じ順序にする。
+	clip.AddKeyFrame(keyFrame);
+}
+
+const std::string& QFE::FRAMEWORK::GetAnimationClipName(const ANIMATION::AnimationClip& clip) { return clip.GetName(); }
+bool QFE::FRAMEWORK::IsAnimationClipLooping(const ANIMATION::AnimationClip& clip) { return clip.IsLoop(); }
+const std::vector<QFE::ANIMATION::AnimationKeyFrame>& QFE::FRAMEWORK::GetAnimationKeyFrames(const ANIMATION::AnimationClip& clip) { return clip.GetKeyFrames(); }
+float QFE::FRAMEWORK::GetAnimationClipDuration(const ANIMATION::AnimationClip& clip) { return clip.GetDuration(); }
+QFE::MATH::EulerTransform QFE::FRAMEWORK::SampleAnimationClip(const ANIMATION::AnimationClip& clip, float time) { return clip.Sample(time); }
+
 bool QFE::FRAMEWORK::SaveAnimationClip(const ANIMATION::AnimationClip& clip, const std::string& filePath) {
 	const std::filesystem::path path(filePath);
 	std::error_code error;

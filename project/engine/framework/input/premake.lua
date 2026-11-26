@@ -109,6 +109,8 @@ project "InputFramework"
     }
     links {
         "Input",
+        -- Windows 実装でメインウィンドウのハンドルを取得する。
+        "WindowingSystem",
         "EngineCore",
     }
 

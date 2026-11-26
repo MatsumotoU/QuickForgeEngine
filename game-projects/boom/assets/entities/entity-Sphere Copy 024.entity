@@ -1,0 +1,94 @@
+{
+    "entities": [
+        {
+            "EventComponent": {
+                "loop": true,
+                "playOnStart": true,
+                "playbackSpeed": 1.0,
+                "requestFlags": 0,
+                "tracks": [
+                    {
+                        "component": "TransformComponent",
+                        "interpolation": "Linear",
+                        "keyframes": [
+                            {
+                                "time": 0,
+                                "value": 4.199999809265137
+                            },
+                            {
+                                "time": 5.849999904632568,
+                                "value": -6.800000190734863
+                            }
+                        ],
+                        "property": "transform.translate.y",
+                        "targetUuid": ""
+                    }
+                ]
+            },
+            "MaterialComponent": {
+                "albedoColor": {
+                    "w": 1.0,
+                    "x": 1.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                "metallic": 0.0,
+                "smoothness": 0.5,
+                "uvTransform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    }
+                }
+            },
+            "ModelRenderComponent": {
+                "modelName": "Primitive/Sphere",
+                "textureName": ""
+            },
+            "ObjectInfoComponent": {
+                "hierarchyGroup": "",
+                "name": "Sphere Copy 024",
+                "uuid": "c37cfa98-f580-424f-be6a-fe9da82c937e"
+            },
+            "ShaderComponent": {
+                "castShadow": true,
+                "receiveShadow": true
+            },
+            "SphereColliderComponent": {
+                "mask": 0,
+                "onCollisionEnterScriptFunctionName": "",
+                "radius": 0.699999988079071
+            },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "scale": {
+                        "x": 1.0,
+                        "y": 1.0,
+                        "z": 1.0
+                    },
+                    "translate": {
+                        "x": 8.0,
+                        "y": 4.199999809265137,
+                        "z": 8.0
+                    }
+                }
+            }
+        }
+    ]
+}

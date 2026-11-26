@@ -1,11 +1,10 @@
 #include "AssetBrowser.h"
 #include "AssetDrop.h"
-#include "assetfactory/game-data/AssetManager.h"
-#include "assetfactory/game-data/GameProjectPaths.h"
+#include "framework/assets/AssetsCoreFramework.h"
 #include "command/EditorCommandList.h"
 #include "command/LoadSceneCommand.h"
 #include "framework/window/WindowDialogFramework.h"
-#include "window/interface/IGameWindowManager.h"
+#include "framework/window/WindowCoreFrameWork.h"
 #include "string/MyString.h"
 #include <imgui.h>
 #include <algorithm>
@@ -16,12 +15,12 @@ namespace {
 		std::string extension = path.extension().string();
 		std::transform(extension.begin(), extension.end(), extension.begin(),
 			[](unsigned char c) { return static_cast<char>(std::tolower(c)); });
-		if (extension == ".glb" || extension == ".obj") return assets.ImportRawFile(path, error) ? "copied" : "";
+		if (extension == ".glb" || extension == ".obj") return QFE::FRAMEWORK::ASSETS::ImportFile(assets, path, error) ? "copied" : "";
 		error = "Select a GLB or OBJ model.";
 		return {};
 	}
 	std::string ImportFile(QFE::ASSET::AssetManager& assets, const std::filesystem::path& path, std::string& error) {
-		return assets.ImportRawFile(path, error) ? "copied" : "";
+		return QFE::FRAMEWORK::ASSETS::ImportFile(assets, path, error) ? "copied" : "";
 	}
 }
 
@@ -37,7 +36,7 @@ void QFE::EDITOR::AssetBrowser::Initialize() {
 void QFE::EDITOR::AssetBrowser::Refresh() {
 	groups_.clear();
 	status_.clear();
-	for (const auto& path : assets_->ListProjectFiles(status_)) {
+	for (const auto& path : QFE::FRAMEWORK::ASSETS::ListProjectFiles(*assets_, status_)) {
 		std::string lower = path;
 		std::transform(lower.begin(), lower.end(), lower.begin(),
 			[](unsigned char c) { return static_cast<char>(std::tolower(c)); });
@@ -52,7 +51,7 @@ void QFE::EDITOR::AssetBrowser::Refresh() {
 void QFE::EDITOR::AssetBrowser::Draw(std::set<uint32_t>&, EditorCommandList& commandList) {
 	const bool visible = ImGui::Begin(GetWindowName().c_str(), &isActive_);
 	isFocus_ = ImGui::IsWindowFocused();
-	const auto droppedFiles = windowManager_->ConsumeDroppedFiles();
+	const auto droppedFiles = QFE::FRAMEWORK::ConsumeDroppedFiles(*windowManager_);
 	if (visible) {
 		const ImVec2 position = ImGui::GetWindowPos();
 		const ImVec2 size = ImGui::GetWindowSize();
@@ -78,7 +77,7 @@ void QFE::EDITOR::AssetBrowser::Draw(std::set<uint32_t>&, EditorCommandList& com
 		if (ImGui::Button("Import Image...")) {
 			std::wstring path;
 			if (QFE::FRAMEWORK::RequestGetFilePathFromUser(*windowManager_, L"Image Files (*.png;*.jpg;*.jpeg;*.bmp;*.tif;*.tiff)", L"*.png;*.jpg;*.jpeg;*.bmp;*.tif;*.tiff", path)) {
-				if (assets_->ImportRawFile(std::filesystem::path(path), status_)) Refresh();
+				if (QFE::FRAMEWORK::ASSETS::ImportFile(*assets_, std::filesystem::path(path), status_)) Refresh();
 			}
 		}
 		ImGui::SameLine();
@@ -99,7 +98,7 @@ void QFE::EDITOR::AssetBrowser::Draw(std::set<uint32_t>&, EditorCommandList& com
 					const std::filesystem::path assetPath(std::u8string(
 						reinterpret_cast<const char8_t*>(item.data()), item.size()));
 					std::error_code error;
-					const bool exists = std::filesystem::is_regular_file(QFE::PROJECT::Assets() / assetPath, error);
+					const bool exists = std::filesystem::is_regular_file(QFE::FRAMEWORK::ASSETS::GetProjectAssets() / assetPath, error);
 					const std::string itemLabel = item + (exists ? "" : " (missing)");
 					// 選択可能な項目にすることで、クリック表示とドラッグ開始の両方を有効にする。
 					if (ImGui::Selectable(itemLabel.c_str(), selectedPath_ == item) || ImGui::IsItemActivated()) {
@@ -108,9 +107,9 @@ void QFE::EDITOR::AssetBrowser::Draw(std::set<uint32_t>&, EditorCommandList& com
 					std::string extension = assetPath.extension().string();
 					std::transform(extension.begin(), extension.end(), extension.begin(),
 						[](unsigned char c) { return static_cast<char>(std::tolower(c)); });
-					const auto fullPath = QFE::PROJECT::Assets() / assetPath;
+					const auto fullPath = QFE::FRAMEWORK::ASSETS::GetProjectAssets() / assetPath;
 					if (exists && (extension == ".scene" || extension == ".json") &&
-						QFE::PROJECT::IsWithin(fullPath, QFE::PROJECT::Assets() / "scenes") &&
+						QFE::FRAMEWORK::ASSETS::IsPathWithin(fullPath, QFE::FRAMEWORK::ASSETS::GetProjectAssets() / "scenes") &&
 						ImGui::IsItemHovered() && ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)) {
 						commandList.AddCommand(std::make_unique<LoadSceneCommand>(QFE::ConvertString(fullPath.wstring()), sceneManager_));
 					}

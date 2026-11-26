@@ -5,9 +5,8 @@
 
 #include "command/AllCommands.h"
 #include "command/EditorCommandList.h"
-#include "assetfactory/model/PrimitiveFactoryFuncs.h"
-#include "assetfactory/game-data/AssetManager.h"
-#include "scene/SceneManager.h"
+#include "framework/assets/AssetsCoreFramework.h"
+#include "framework/scene/SceneCoreFramework.h"
 
 #include <imgui/imgui.h>
 #include <imgui_stdlib.h>
@@ -44,7 +43,7 @@ namespace {
 
 QFE::EDITOR::Hierarchy::Hierarchy(QFE::SCENE::SceneManager* sceneManager, QFE::ASSET::AssetManager& assets)
 	: sceneManager_(sceneManager),
-	entityManager_(sceneManager != nullptr ? &sceneManager->GetCurrentSceneEntityManager() : nullptr),
+	entityManager_(sceneManager != nullptr ? &QFE::FRAMEWORK::GetSceneEntities(*sceneManager) : nullptr),
 	assets_(&assets),
 	isActive_(true) {}
 
@@ -267,7 +266,7 @@ void QFE::EDITOR::Hierarchy::Draw(std::set<uint32_t>& selectedEntities, EditorCo
 						"New Sprite", QFE::MATH::Vector3(640.0f, 360.0f, 0.0f), entityManager_, std::string{}, true));
 				}
 				if (ImGui::BeginMenu("3D Object")) {
-					for (const std::string& modelName : QFE::ASSET::GetPrimitiveMeshNames()) {
+					for (const std::string& modelName : QFE::FRAMEWORK::ASSETS::GetPrimitiveMeshNames()) {
 						const std::string entityName = MakeEntityName(modelName);
 						if (ImGui::MenuItem(entityName.c_str())) {
 							commandList.AddCommand(std::make_unique<CreateEntityCommand>(
@@ -278,7 +277,7 @@ void QFE::EDITOR::Hierarchy::Draw(std::set<uint32_t>& selectedEntities, EditorCo
 				}
 				std::string listError;
 				std::vector<std::string> models;
-				for (const auto& path : assets_->ListProjectFiles(listError)) {
+				for (const auto& path : QFE::FRAMEWORK::ASSETS::ListProjectFiles(*assets_, listError)) {
 					const std::filesystem::path file(std::u8string(reinterpret_cast<const char8_t*>(path.data()), path.size()));
 					std::string extension = file.extension().string();
 					std::transform(extension.begin(), extension.end(), extension.begin(), [](unsigned char c) { return static_cast<char>(std::tolower(c)); });

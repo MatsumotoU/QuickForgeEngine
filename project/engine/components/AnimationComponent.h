@@ -4,6 +4,7 @@
 #include <string>
 
 namespace QFE::SCENE {
+	// 再生・停止の要求はビットとして蓄積し、アニメーション更新時に処理する。
 	enum AnimationRequestFlags : uint32_t {
 		AnimationRequestNone = 0,
 		AnimationRequestPlay = 1u << 0,
@@ -12,7 +13,7 @@ namespace QFE::SCENE {
 		AnimationRequestRestart = 1u << 3
 	};
 
-	/// @brief TransformComponentは、オブジェクトの位置、回転、スケールを表すコンポーネントです。
+	/// @brief アニメーションクリップの再生設定と、現在の再生状態を保持する。
 	struct AnimationComponent {
 		std::string clipName;
 		bool playOnStart = false;
@@ -20,8 +21,8 @@ namespace QFE::SCENE {
 		bool loop = false;
 		float playbackSpeed = 1.0f;
 		uint32_t requestFlags = AnimationRequestNone;
-		MATH::EulerTransform transform; ///< オブジェクトの位置、回転、スケールを表すEulerTransform構造体
-		MATH::Vector4 color; ///< オブジェクトの色を表すVector4構造体
+		MATH::EulerTransform transform; ///< クリップから補間された位置・回転・スケール。
+		MATH::Vector4 color; ///< アニメーション用の色データ。
 
 		// ランタイム状態（シーンには保存しない）。
 		bool playing = false;

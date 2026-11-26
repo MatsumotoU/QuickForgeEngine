@@ -5,7 +5,7 @@
 #include "ecs/entity/EntityManager.h"
 #include "components/TransformComponent.h"
 #include "components/TransformHierarchy.h"
-#include "scene/SceneManager.h"
+#include "framework/scene/SceneCoreFramework.h"
 
 QFE::EDITOR::SceneViewer::SceneViewer(ImTextureID sceneTextureId, SCENE::SceneManager* sceneManager, unsigned width, unsigned height) :
 	sceneManager_(sceneManager),
@@ -153,7 +153,7 @@ void QFE::EDITOR::SceneViewer::DrawGizmo(
 	}
 
 	const uint32_t entityId = *selectedEntities.begin();
-	EntityManager& entityManager = sceneManager_->GetCurrentSceneEntityManager();
+	EntityManager& entityManager = QFE::FRAMEWORK::GetSceneEntities(*sceneManager_);
 	if (!entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
 		wasUsingGizmo_ = false;
 		return;

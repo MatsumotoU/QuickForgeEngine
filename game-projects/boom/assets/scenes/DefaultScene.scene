@@ -20831,6 +20831,184 @@
                 }
             },
             "id": 206
+        },
+        {
+            "components": {
+                "InputMovementComponent": {
+                    "amount": 5.0,
+                    "applyMode": 0,
+                    "backwardActionName": "Down",
+                    "enabled": true,
+                    "forwardActionName": "Up",
+                    "horizontalAxis": {
+                        "x": 1.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "leftActionName": "Left",
+                    "normalizeInput": true,
+                    "rightActionName": "Right",
+                    "useGamePadLeftStick": true,
+                    "verticalAxis": {
+                        "x": 0.0,
+                        "y": 0.0,
+                        "z": 1.0
+                    }
+                },
+                "MaterialComponent": {
+                    "albedoColor": {
+                        "w": 1.0,
+                        "x": 1.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "metallic": 0.0,
+                    "smoothness": 0.5,
+                    "uvTransform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ModelRenderComponent": {
+                    "modelName": "Primitive/Disk",
+                    "textureName": ""
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "",
+                    "name": "Disk",
+                    "uuid": "cd9eaa2e-4580-4d81-874c-6e1cf6b69661"
+                },
+                "ShaderComponent": {
+                    "castShadow": true,
+                    "receiveShadow": true
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": -0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": -1.8091585636138916,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                }
+            },
+            "id": 207
+        },
+        {
+            "components": {
+                "EventComponent": {
+                    "loop": true,
+                    "playOnStart": true,
+                    "playbackSpeed": 1.0,
+                    "requestFlags": 0,
+                    "tracks": [
+                        {
+                            "component": "TransformComponent",
+                            "interpolation": "Linear",
+                            "keyframes": [
+                                {
+                                    "time": 0,
+                                    "value": 4.199999809265137
+                                },
+                                {
+                                    "time": 5.849999904632568,
+                                    "value": -6.800000190734863
+                                }
+                            ],
+                            "property": "transform.translate.y",
+                            "targetUuid": ""
+                        }
+                    ]
+                },
+                "MaterialComponent": {
+                    "albedoColor": {
+                        "w": 1.0,
+                        "x": 1.0,
+                        "y": 0.0,
+                        "z": 0.0
+                    },
+                    "metallic": 0.0,
+                    "smoothness": 0.5,
+                    "uvTransform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ModelRenderComponent": {
+                    "modelName": "Primitive/Sphere",
+                    "textureName": ""
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "",
+                    "name": "Sphere Copy 024",
+                    "uuid": "39e5907e-fa88-4fa3-8200-a9a5d987233a"
+                },
+                "ShaderComponent": {
+                    "castShadow": true,
+                    "receiveShadow": true
+                },
+                "SphereColliderComponent": {
+                    "mask": 0,
+                    "onCollisionEnterScriptFunctionName": "",
+                    "radius": 0.699999988079071
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": -0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": -2.080253839492798,
+                            "y": -2.6170403957366943,
+                            "z": 8.0
+                        }
+                    }
+                }
+            },
+            "id": 208
         }
     ]
 }

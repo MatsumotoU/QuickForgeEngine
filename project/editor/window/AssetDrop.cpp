@@ -1,10 +1,10 @@
 #include "AssetDrop.h"
-#include "assetfactory/game-data/GameProjectPaths.h"
+#include "framework/assets/AssetsCoreFramework.h"
 #include "command/AddSavedEntitiesCommand.h"
 #include "command/CreateEntityCommand.h"
 #include "command/EditorCommandList.h"
 #include "ecs/entity/EntityManager.h"
-#include "scene/SceneManager.h"
+#include "framework/scene/SceneCoreFramework.h"
 #include "string/MyString.h"
 #include <algorithm>
 #include <cctype>
@@ -50,13 +50,13 @@ void QFE::EDITOR::AcceptAssetDrop(SCENE::SceneManager* sceneManager, EditorComma
 			const std::string payloadData(bytes, bytes + payload->DataSize - 1);
 			const std::string& relative = payloadData;
 			const auto path = PathFromUtf8(relative);
-			const auto assetPath = PROJECT::Assets() / path;
+			const auto assetPath = QFE::FRAMEWORK::ASSETS::GetProjectAssets() / path;
 			std::error_code error;
 			if (bytes[payload->DataSize - 1] == '\0' && !path.is_absolute() &&
-				PROJECT::IsWithin(assetPath, PROJECT::Assets()) &&
+				QFE::FRAMEWORK::ASSETS::IsPathWithin(assetPath, QFE::FRAMEWORK::ASSETS::GetProjectAssets()) &&
 				std::filesystem::is_regular_file(assetPath, error) && !error) {
 				const AssetKind kind = GetAssetKind(path);
-				auto& manager = sceneManager->GetCurrentSceneEntityManager();
+				auto& manager = QFE::FRAMEWORK::GetSceneEntities(*sceneManager);
 				const ImVec2 mouse = ImGui::GetMousePos();
 				const float x = (mouse.x - imagePosition.x) / imageSize.x;
 				const float y = (mouse.y - imagePosition.y) / imageSize.y;

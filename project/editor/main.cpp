@@ -8,11 +8,13 @@
 
 #include "framework/graphic/GraphicEngineCoreFramework.h"
 #include "framework/window/WindowCoreFrameWork.h"
+#include "framework/window/WindowDialogFramework.h"
 #include "framework/gui/GuiCoreFramework.h"
 #include "framework/input/InputFrameWork.h"
+#include "framework/assets/AssetsCoreFramework.h"
+#include "framework/scene/SceneCoreFramework.h"
 
 
-#include "scene/SceneManager.h"
 #include "game/shooting-editor/ShootingInspectorRegistration.h"
 #include "core/logger/MyDebugLog.h"
 #include "core/string/MyString.h"
@@ -21,7 +23,7 @@
 
 #include "GameEditor.h"
 #include "EditorConfig.h"
-#include "assetfactory/game-data/GameProjectPaths.h"
+
 
 #include <filesystem>
 #include <stdexcept>
@@ -31,7 +33,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	// 相対パスは起動時の作業ディレクトリを基準にする。
 	QFE::EDITOR::EditorConfig projectConfig;
 	if (!projectConfig.Load(L"EditorConfig.json")) {
-		MessageBoxW(nullptr, L"Could not load EditorConfig.json. Select a project using editor/SelectProject.bat.", L"QuickForge", MB_OK | MB_ICONERROR);
+		QFE::FRAMEWORK::ShowWindowError(L"Could not load EditorConfig.json. Select a project using editor/SelectProject.bat.", L"QuickForge");
 		return -1;
 	}
 	// プロジェクトのルートを絶対パスに変換し、assets 以下のディレクトリを作成する。
@@ -45,10 +47,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 		}
 	}
 	if (pathError) {
-		MessageBoxW(nullptr, L"Could not create project directories. Check EditorConfig.json.", L"QuickForge", MB_OK | MB_ICONERROR);
+		QFE::FRAMEWORK::ShowWindowError(L"Could not create project directories. Check EditorConfig.json.", L"QuickForge");
 		return -1;
 	}
-	QFE::PROJECT::SetRoot(projectRoot);
+	QFE::FRAMEWORK::ASSETS::SetProjectRoot(projectRoot);
 
 	// QuickForgeエンジンのリソースを初期化
 	QFE::FRAMEWORK::WindowsEngineResources engineResources;
@@ -77,7 +79,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 		startupScene = QFE::FRAMEWORK::InitializeProjectStartupScene(projectRoot, *engineSystems.sceneManager);
 	} catch (const std::exception& error) {
 		QFE_LOG(std::string("Failed to initialize project: ") + error.what(), QFE::LogLevel::Error);
-		MessageBoxW(nullptr, L"Could not initialize the project or its startup scene. Check project.json and the scene file.", L"QuickForge", MB_OK | MB_ICONERROR);
+		QFE::FRAMEWORK::ShowWindowError(L"Could not initialize the project or its startup scene. Check project.json and the scene file.", L"QuickForge");
 		QFE::FRAMEWORK::ShutdownWindowsQuickForgeEngineSystems(engineSystems);
 		return -1;
 	}
@@ -95,22 +97,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 	auto& graphicEngine = engineSystems.graphicEngine;
 	QFE::SCENE::SceneManager& sceneManager = *engineSystems.sceneManager;
 	try {
-		sceneManager.LoadCurrentSceneFromJson(QFE::ConvertString(startupScene.wstring()));
+		QFE::FRAMEWORK::LoadScene(sceneManager, QFE::ConvertString(startupScene.wstring()));
 	} catch (const std::exception& error) {
 		QFE_LOG(std::string("Failed to load startup scene: ") + error.what(), QFE::LogLevel::Error);
-		MessageBoxW(nullptr, L"Could not load the project's startup scene.", L"QuickForge", MB_OK | MB_ICONERROR);
+		QFE::FRAMEWORK::ShowWindowError(L"Could not load the project's startup scene.", L"QuickForge");
 		QFE::FRAMEWORK::ShutdownWindowsQuickForgeEngineSystems(engineSystems);
 		return -1;
 	}
 
 	// エディタ用のシーンテクスチャ（レンダーターゲット）の作成
-	QFE::GRAPHIC::RenderTargetHandle sceneRenderTargetHandle;
-	QFE::GRAPHIC::DirectXResourceHandle sceneTextureHandle;
 	uintptr_t sceneTextureGuiId = 0;
-	if (!QFE::GRAPHIC::CreateEditorSceneTexture(
+	if (!QFE::FRAMEWORK::CreateEditorSceneTexture(
 		graphicEngine.get(),
-		sceneRenderTargetHandle,
-		sceneTextureHandle,
+		engineResources.finalRenderTargetHandle,
 		sceneTextureGuiId,
 		engineResources.windowWidth,
 		engineResources.windowHeight)) {
@@ -118,8 +117,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE, LPSTR, int) {
 		return -1;
 	}
 
-	// レイトレーシング結果をEditorのシーンテクスチャへ出力する。
-	engineResources.finalRenderTargetHandle = sceneRenderTargetHandle;
+	// 作成した描画先にエンジンの描画結果を出力し、GUI から同じテクスチャを参照する。
 	ImTextureID sceneTextureId = static_cast<ImTextureID>(sceneTextureGuiId);
 
 	QFE::EDITOR::GameEditor gameEditor;

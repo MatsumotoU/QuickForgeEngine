@@ -2,7 +2,7 @@
 
 #include "framework/animation/AnimationDataServices.h"
 #include "ecs/entity/EntityManager.h"
-#include "animation/AnimationComponent.h"
+#include "components/AnimationComponent.h"
 
 #include <algorithm>
 #include <cmath>
