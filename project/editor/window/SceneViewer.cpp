@@ -1,4 +1,5 @@
 #include "SceneViewer.h"
+#include "inspector/ComponentInspectorRegistry.h"
 #include "AssetDrop.h"
 #include "command/ChangeTransformCommand.h"
 #include "command/EditorCommandList.h"
@@ -122,8 +123,10 @@ namespace {
 	}
 }
 
-QFE::EDITOR::SceneViewer::SceneViewer(ImTextureID sceneTextureId, SCENE::SceneManager* sceneManager, ASSET::ModelLoader& modelLoader, unsigned width, unsigned height) :
+QFE::EDITOR::SceneViewer::SceneViewer(ImTextureID sceneTextureId, SCENE::SceneManager* sceneManager, ASSET::ModelLoader& modelLoader, unsigned width, unsigned height,
+	const ComponentInspectorRegistry* componentInspectorRegistry) :
 	sceneManager_(sceneManager),
+	componentInspectorRegistry_(componentInspectorRegistry),
 	sceneTextureId_(sceneTextureId),
 	width_(width), height_(height),
 	isActive_(true),
@@ -205,6 +208,7 @@ void QFE::EDITOR::SceneViewer::Draw(std::set<uint32_t>& selectedEntities, Editor
 		if (!placementStatus_.empty()) ImGui::TextWrapped("%s", placementStatus_.c_str());
 	}
 	DrawGridControls();
+	ImGui::Checkbox("Game Debug", &showGameOverlays_);
 
 	ImVec2 availSize = ImGui::GetContentRegionAvail();
 	if (availSize.x <= 0.0f || availSize.y <= 0.0f) {
@@ -231,7 +235,13 @@ void QFE::EDITOR::SceneViewer::Draw(std::set<uint32_t>& selectedEntities, Editor
 	isImageHovered_ = ImGui::IsItemHovered();
 	AcceptAssetDrop(sceneManager_, commandList, imagePosition, renderSize, width_, height_,
 		MATH::Matrix4x4::MakeIdentity4x4(), dropViewProjection_, &grid_);
+	if (debugLines_) FRAMEWORK::DrawDebugLines(*debugLines_, dropViewProjection_,
+		{ imagePosition.x, imagePosition.y }, { renderSize.x, renderSize.y }, false);
 	if (grid_.enabled || placementMode_ != 0) DrawPlacementGrid(imagePosition, renderSize);
+	if (showGameOverlays_ && componentInspectorRegistry_ && sceneManager_) {
+		componentInspectorRegistry_->DrawSceneOverlays(QFE::FRAMEWORK::GetSceneEntities(*sceneManager_),
+			dropViewProjection_, imagePosition, renderSize);
+	}
 	if (placementMode_ != 0) DrawPlacementTools(imagePosition, renderSize, commandList);
 
 	ImGuizmo::SetDrawlist(ImGui::GetWindowDrawList());

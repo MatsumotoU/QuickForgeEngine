@@ -34,10 +34,14 @@ namespace {
 QFE::EDITOR::Inspector::Inspector(
 	QFE::EntityManager* entityManager,
 	QFE::ASSET::ModelLoader* modelLoader,
-	const ComponentInspectorRegistry* componentInspectorRegistry) :
+	const ComponentInspectorRegistry* componentInspectorRegistry,
+	const std::vector<std::string>* gameTags,
+	const std::vector<QFE::FRAMEWORK::GameInputAction>* gameInputActions) :
 	entityManager_(entityManager),
 	modelLoader_(modelLoader),
 	componentInspectorRegistry_(componentInspectorRegistry),
+	gameTags_(gameTags),
+	gameInputActions_(gameInputActions),
 	isActive_(true),
 	isFocus_(false) {
 }
@@ -87,7 +91,7 @@ bool QFE::EDITOR::Inspector::GetIsFocus() {
 void QFE::EDITOR::Inspector::DrawComponents(uint32_t entityId) {
 	ImGui::Text("Entity ID: %u", entityId);
 
-	ImGuiArchive archive(entityManager_, entityId, modelLoader_);
+	ImGuiArchive archive(entityManager_, entityId, modelLoader_, gameTags_, componentInspectorRegistry_, gameInputActions_);
 	std::vector<std::string> componentTypeNames = entityManager_->GetComponentTypeNames(entityId);
 	std::sort(componentTypeNames.begin(), componentTypeNames.end());
 	for (const std::string& componentTypeName : componentTypeNames) {
@@ -96,7 +100,7 @@ void QFE::EDITOR::Inspector::DrawComponents(uint32_t entityId) {
 		if (ImGui::CollapsingHeader(componentTypeName.c_str())) {
 			const bool wasDrawnByCustomInspector =
 				componentInspectorRegistry_ != nullptr &&
-				componentInspectorRegistry_->Draw(componentTypeName, *entityManager_, entityId);
+				componentInspectorRegistry_->Draw(componentTypeName, *entityManager_, entityId, gameInputActions_);
 			if (!wasDrawnByCustomInspector) {
 				if (componentTypeName == "DirectionalLightComponent") {
 					auto& light = entityManager_->GetComponent<QFE::SCENE::DirectionalLightComponent>(entityId);

@@ -22,6 +22,7 @@
 #include "components/AnimationComponent.h"
 #include "PhysicsComponent.h"
 #include "InputMovementComponent.h"
+#include "InputControlComponent.h"
 #include "SplineMovementComponent.h"
 #include "SplineMoveToPointComponent.h"
 #include "EventComponent.h"

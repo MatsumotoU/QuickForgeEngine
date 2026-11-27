@@ -24,7 +24,7 @@ namespace QFE::INPUT {
 				if (!gamepadStates[i].isConnected) {
 					gamepadStates[i].isConnected = true;
 #ifdef QFE_OPTIMIZE_OFF
-					QFE_LOG(std::format("Connected Controller! paletNumber: {}", gamepadStates[i].state.dwPacketNumber));
+					QFE_LOG(std::format("Connected Controller! packetNumber: {}", gamepadStates[i].state.dwPacketNumber));
 
 					// 機能情報を取得
 					XINPUT_CAPABILITIES cap;

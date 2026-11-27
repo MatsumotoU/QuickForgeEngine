@@ -2,6 +2,7 @@
 #include "IEditorWindow.h"
 #include "GridPlacement.h"
 #include "math/MathInclude.h"
+#include "framework/gui/GuiCoreFramework.h"
 #include <imgui/imgui.h>
 #include <ImGuizmo-1.83/ImGuizmo.h>
 #include <string>
@@ -13,11 +14,13 @@ namespace QFE::SCENE {
 namespace QFE::ASSET { class ModelLoader; }
 
 namespace QFE::EDITOR {
+	class ComponentInspectorRegistry;
 	/// @brief SceneViewerはシーンを表示します
 	class SceneViewer final : public IEditorWindow {
 	public:
 		/// @brief SceneViewerのコンストラクタ
-		SceneViewer(ImTextureID sceneTextureId, SCENE::SceneManager* sceneManager, ASSET::ModelLoader& modelLoader, unsigned width, unsigned height);
+		SceneViewer(ImTextureID sceneTextureId, SCENE::SceneManager* sceneManager, ASSET::ModelLoader& modelLoader, unsigned width, unsigned height,
+			const ComponentInspectorRegistry* componentInspectorRegistry);
 
 		/// @brief ウィンドウの初期化処理
 		void Initialize() override;
@@ -42,6 +45,7 @@ namespace QFE::EDITOR {
 		bool IsGizmoCapturingMouse() const;
 		/// @brief 表示中のカメラのビュー投影行列をドロップ位置計算に使用する。
 		void SetAssetDropViewProjection(const MATH::Matrix4x4& viewProjection);
+		void SetDebugLines(const std::vector<FRAMEWORK::DebugLine>* lines) { debugLines_ = lines; }
 		// ペイント中だけブラウザの選択を受け取り、対象の種類に合わせてモードも切り替える。
 		void SelectPaintAsset(const std::string& path);
 		std::string ConsumePaintSelection();
@@ -56,6 +60,9 @@ namespace QFE::EDITOR {
 		void LoadPlacementPreview();
 
 		SCENE::SceneManager* sceneManager_;
+		const ComponentInspectorRegistry* componentInspectorRegistry_;
+		bool showGameOverlays_ = true;
+		const std::vector<FRAMEWORK::DebugLine>* debugLines_ = nullptr;
 		ImTextureID sceneTextureId_;
 		unsigned width_;
 		unsigned height_;

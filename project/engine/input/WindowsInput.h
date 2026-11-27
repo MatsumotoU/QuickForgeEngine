@@ -74,7 +74,7 @@ namespace QFE::INPUT {
 		MATH::Vector2 GetGamePadRightStickDir() override;
 		// --- キーコンフィグ ---
 		/// @brief アクション名にキーコードを紐付け
-		void AddKeyConfig(const std::string& actionName, uint32_t keyCorde);
+		void AddKeyConfig(const std::string& actionName, uint32_t keyCode);
 		/// @brief 指定したアクションのキー設定をクリア
 		void ClearKeyConfig(const std::string& actionName);
 		/// @brief アクションに紐付けられたキーコードリストを取得

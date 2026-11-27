@@ -1,0 +1,28 @@
+{
+    "entities": [
+        {
+            "StatusComponent": { "health": 3, "attackPower": 1 },
+            "MaterialComponent": {
+                "albedoColor": { "x": 0.8, "y": 0.15, "z": 0.15, "w": 1.0 },
+                "metallic": 0.0,
+                "smoothness": 0.0
+            },
+            "ModelRenderComponent": { "modelName": "Primitive/Sphere", "textureName": "" },
+            "ObjectInfoComponent": {
+                "hierarchyGroup": "Enemies",
+                "name": "Enemy",
+                "tags": ["Enemy"],
+                "uuid": "f3fedf57-a744-4a7f-85a9-2c550a24cabc"
+            },
+            "ShaderComponent": { "castShadow": true, "receiveShadow": true },
+            "SphereColliderComponent": { "mask": 0, "radius": 0.5 },
+            "TransformComponent": {
+                "transform": {
+                    "rotate": { "x": 0.0, "y": 0.0, "z": 0.0 },
+                    "scale": { "x": 1.0, "y": 1.0, "z": 1.0 },
+                    "translate": { "x": 0.0, "y": 0.0, "z": 0.0 }
+                }
+            }
+        }
+    ]
+}

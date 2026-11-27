@@ -4,6 +4,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
+#include <limits>
 
 namespace QFE::GAMESYSTEM::CollisionShapes {
 	using MATH::Vector3;
@@ -70,6 +71,38 @@ namespace QFE::GAMESYSTEM::CollisionShapes {
 		return true;
 	}
 
+	// 回転や壁の移動で既に重なった箱を、最も短い距離で外へ出す。
+	inline bool BoxPenetration(const Shape& moving, const Shape& wall, float& depth, Vector3& normal) {
+		float smallest = (std::numeric_limits<float>::max)();
+		Vector3 best{};
+		const Vector3 offset = moving.center - wall.center;
+		const auto testAxis = [&](Vector3 axis) {
+			const float lengthSquared = Dot(axis, axis);
+			if (lengthSquared < 1.0e-12f) return true;
+			axis = axis * (1.0f / std::sqrt(lengthSquared));
+			float extent = 0.0f;
+			for (int i = 0; i < 3; ++i)
+				extent += moving.extents[i] * std::abs(Dot(moving.axes[i], axis)) +
+					wall.extents[i] * std::abs(Dot(wall.axes[i], axis));
+			const float distance = Dot(offset, axis);
+			const float overlap = extent - std::abs(distance);
+			if (overlap <= 1.0e-6f) return false;
+			if (overlap < smallest) {
+				smallest = overlap;
+				best = distance < 0.0f ? axis * -1.0f : axis;
+			}
+			return true;
+		};
+		for (int i = 0; i < 3; ++i) {
+			if (!testAxis(moving.axes[i]) || !testAxis(wall.axes[i])) return false;
+			for (int j = 0; j < 3; ++j)
+				if (!testAxis(Cross(moving.axes[i], wall.axes[j]))) return false;
+		}
+		depth = smallest;
+		normal = best;
+		return true;
+	}
+
 	// 球の中心を半径分広げた箱に対して掃引し、高速移動でも壁を飛び越えないようにする。
 	// 角では実際の球より保守的に止まるが、壁へのめり込みを防げる。
 	inline bool SweepSphereBox(const Vector3& center, float radius, const Vector3& movement,
@@ -100,6 +133,46 @@ namespace QFE::GAMESYSTEM::CollisionShapes {
 			if (enter > exit) return false;
 		}
 		// 初期配置ですでに重なっている場合は脱出を妨げない。
+		if (inside || enter < 0.0f || enter > 1.0f || Dot(movement, hitNormal) >= 0.0f) return false;
+		time = enter;
+		normal = hitNormal;
+		return true;
+	}
+
+	// 箱を平行移動させたとき、各分離軸で重なり始める時間を求める。
+	// 回転は移動前の姿勢で固定し、移動中に薄い壁を通り抜けることを防ぐ。
+	inline bool SweepBoxBox(const Shape& moving, const Vector3& movement,
+		const Shape& wall, float& time, Vector3& normal) {
+		float enter = 0.0f, exit = 1.0f;
+		Vector3 hitNormal{};
+		bool inside = true;
+		const auto testAxis = [&](Vector3 axis) {
+			const float lengthSquared = Dot(axis, axis);
+			// 平行な辺の外積は分離軸にならない。
+			if (lengthSquared < 1.0e-12f) return true;
+			axis = axis * (1.0f / std::sqrt(lengthSquared));
+			float extent = 0.0f;
+			for (int i = 0; i < 3; ++i)
+				extent += moving.extents[i] * std::abs(Dot(moving.axes[i], axis)) +
+					wall.extents[i] * std::abs(Dot(wall.axes[i], axis));
+			const float position = Dot(moving.center - wall.center, axis);
+			const float speed = Dot(movement, axis);
+			if (std::abs(position) >= extent - 1.0e-5f) inside = false;
+			if (std::abs(speed) < 1.0e-8f) return position > -extent && position < extent;
+			float nearTime = (-extent - position) / speed;
+			float farTime = (extent - position) / speed;
+			Vector3 nearNormal = axis * -1.0f;
+			if (nearTime > farTime) { std::swap(nearTime, farTime); nearNormal = axis; }
+			if (nearTime >= enter) { enter = nearTime; hitNormal = nearNormal; }
+			exit = (std::min)(exit, farTime);
+			return enter <= exit;
+		};
+		for (int i = 0; i < 3; ++i) {
+			if (!testAxis(moving.axes[i]) || !testAxis(wall.axes[i])) return false;
+			for (int j = 0; j < 3; ++j)
+				if (!testAxis(Cross(moving.axes[i], wall.axes[j]))) return false;
+		}
+		// 既に重なっている場合は、球と同様に脱出を妨げない。
 		if (inside || enter < 0.0f || enter > 1.0f || Dot(movement, hitNormal) >= 0.0f) return false;
 		time = enter;
 		normal = hitNormal;

@@ -5,7 +5,6 @@
 #include "GameEditor.h"
 #include "ecs/entity/EntityManager.h"
 #include "framework/scene/SceneCoreFramework.h"
-#include "framework/input/InputFrameWork.h"
 
 #include <algorithm>
 
@@ -46,8 +45,6 @@ void QFE::EDITOR::GameEditor::Update(
 		activeCameraType_ = EditorCameraType::MainCamera;
 	}
 
-	QFE::INPUT::InputInterface* inputInterface = systems.inputInterface.get();
-
 	// Hierarchyでダブルクリックされたオブジェクトを画面中央に収める
 	QFE::MATH::Vector3 focusPosition{};
 	float focusRadius = 1.0f;
@@ -61,39 +58,42 @@ void QFE::EDITOR::GameEditor::Update(
 
 	// デバッグカメラ操作処理
 	if (windowManager_.IsWindowFocused(EditorWindowType::SceneViewer) &&
-		!windowManager_.IsSceneGizmoCapturingMouse()) {
+		!windowManager_.IsSceneGizmoCapturingMouse() && !ImGui::GetIO().WantTextInput) {
 		float moveSpeed = 0.3f;
 
 		// 右クリックは配置に使うため、カメラ操作は中央ボタンにまとめる。
-		if (QFE::FRAMEWORK::GetMousePress(inputInterface, 2)) {
+		if (ImGui::IsMouseDown(ImGuiMouseButton_Middle)) {
 			// 移動処理
-			if (QFE::FRAMEWORK::GetKeyPress(inputInterface, "Up")) {
+			if (ImGui::IsKeyDown(ImGuiKey_W) || ImGui::IsKeyDown(ImGuiKey_UpArrow)) {
 				QFE::MATH::Vector3 rotatedForward = QFE::MATH::TransformForwardDirection(resources.cameraTransform);
 				resources.cameraTransform.translate += rotatedForward * moveSpeed;
 			}
-			if (QFE::FRAMEWORK::GetKeyPress(inputInterface, "Down")) {
+			if (ImGui::IsKeyDown(ImGuiKey_S) || ImGui::IsKeyDown(ImGuiKey_DownArrow)) {
 				QFE::MATH::Vector3 rotatedForward = QFE::MATH::TransformForwardDirection(resources.cameraTransform);
 				resources.cameraTransform.translate -= rotatedForward * moveSpeed;
 			}
-			if (QFE::FRAMEWORK::GetKeyPress(inputInterface, "Left")) {
+			if (ImGui::IsKeyDown(ImGuiKey_A) || ImGui::IsKeyDown(ImGuiKey_LeftArrow)) {
 				QFE::MATH::Vector3 right = QFE::MATH::TransformRightDirection(resources.cameraTransform);
 				resources.cameraTransform.translate -= right * moveSpeed;
 			}
-			if (QFE::FRAMEWORK::GetKeyPress(inputInterface, "Right")) {
+			if (ImGui::IsKeyDown(ImGuiKey_D) || ImGui::IsKeyDown(ImGuiKey_RightArrow)) {
 				QFE::MATH::Vector3 right = QFE::MATH::TransformRightDirection(resources.cameraTransform);
 				resources.cameraTransform.translate += right * moveSpeed;
 			}
-			if (QFE::FRAMEWORK::GetKeyPress(inputInterface, QFE::FRAMEWORK::InputKey::LeftControl)) {
+			if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl)) {
 				resources.cameraTransform.translate.y -= moveSpeed;
 			}
-			if (QFE::FRAMEWORK::GetKeyPress(inputInterface, QFE::FRAMEWORK::InputKey::Space)) {
+			if (ImGui::IsKeyDown(ImGuiKey_Space)) {
 				resources.cameraTransform.translate.y += moveSpeed;
 			}
 		}
 
 		// 回転処理
-		if(QFE::FRAMEWORK::GetMousePress(inputInterface, 2)) {
-			QFE::MATH::Vector2 mouseMove = QFE::FRAMEWORK::GetMouseMove(inputInterface);
+		if (ImGui::IsMouseDown(ImGuiMouseButton_Middle)) {
+			const ImVec2 delta = ImGui::GetIO().MouseDelta;
+			// 以前のカメラ操作と同じくマウスの移動方向を使い、感度を維持する。
+			QFE::MATH::Vector2 mouseMove{ delta.x, delta.y };
+			mouseMove = mouseMove.Normalize();
 			resources.cameraTransform.rotate.y += mouseMove.x * 0.02f;
 			resources.cameraTransform.rotate.x += mouseMove.y * 0.02f;
 		}

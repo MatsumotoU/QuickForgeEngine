@@ -1,11 +1,23 @@
 #include "framework/scene/SceneCoreFramework.h"
 #include "components/CameraRoomComponent.h"
+#include "components/InputControlComponent.h"
 #include "components/RoomCameraComponent.h"
 #include "components/ParentComponent.h"
 #include "components/TransformHierarchy.h"
 #include <algorithm>
 #include <cmath>
 
+bool QFE::FRAMEWORK::IsGameActionEnabled(SCENE::SceneManager& scene, const std::string& action) {
+	bool permitted = true;
+	for (const auto sceneId : scene.GetSceneIds()) {
+		auto* entities = scene.GetSceneEntityManager(sceneId);
+		if (!entities) continue;
+		entities->Each<QFE::COMPONENTS::InputControlComponent>([&](uint32_t, QFE::COMPONENTS::InputControlComponent& control) {
+			if (control.BlocksAction(action)) permitted = false;
+		});
+	}
+	return permitted;
+}
 void QFE::FRAMEWORK::UpdateRoomCameras(EntityManager& entities, float deltaTime) {
 	if (deltaTime <= 0.0f) return;
 	entities.Each<SCENE::RoomCameraComponent, SCENE::TransformComponent>(

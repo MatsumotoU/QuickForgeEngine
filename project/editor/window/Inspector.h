@@ -1,11 +1,14 @@
 #pragma once
 #include "IEditorWindow.h"
 #include <imgui/imgui.h>
+#include <string>
+#include <vector>
 
 namespace QFE {
 	class EntityManager;
 }
 namespace QFE::ASSET { class ModelLoader; }
+namespace QFE::FRAMEWORK { struct GameInputAction; }
 
 namespace QFE::EDITOR {
 	class ComponentInspectorRegistry;
@@ -17,7 +20,9 @@ namespace QFE::EDITOR {
 		Inspector(
 			QFE::EntityManager* entityManager,
 			QFE::ASSET::ModelLoader* modelLoader,
-			const ComponentInspectorRegistry* componentInspectorRegistry);
+			const ComponentInspectorRegistry* componentInspectorRegistry,
+			const std::vector<std::string>* gameTags,
+			const std::vector<QFE::FRAMEWORK::GameInputAction>* gameInputActions);
 
 		/// @brief ウィンドウの初期化処理
 		void Initialize() override;
@@ -42,6 +47,8 @@ namespace QFE::EDITOR {
 		QFE::EntityManager* entityManager_;
 		QFE::ASSET::ModelLoader* modelLoader_;
 		const ComponentInspectorRegistry* componentInspectorRegistry_;
+		const std::vector<std::string>* gameTags_;
+		const std::vector<QFE::FRAMEWORK::GameInputAction>* gameInputActions_;
 		bool isActive_;
 		bool isFocus_;
 	};

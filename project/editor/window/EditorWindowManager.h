@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include "math/MathInclude.h"
 #include "framework/application/EngineConfig.h"
+#include "framework/input/InputFrameWork.h"
 #include "framework/network/NetworkCoreFrame.h"
 #include <chrono>
 
@@ -85,6 +86,13 @@ namespace QFE::EDITOR {
 		QFE::FRAMEWORK::EngineConfig engineConfig_;
 		bool showEngineConfig_ = false;
 		std::string engineConfigStatus_;
+		// Inspector と同じ一覧を参照し、ゲームごとのタグ選択を即座に反映する。
+		std::vector<std::string> gameTags_{ "Default" };
+		std::vector<QFE::FRAMEWORK::GameInputAction> gameInputActions_;
+		std::string newInputAction_;
+		std::string newGameTag_;
+		std::string gameConfigStatus_;
+		bool showGameConfig_ = false;
 		// ランタイムごとに接続と未完成メッセージを破棄し、前回のログが混ざるのを防ぐ。
 		std::unique_ptr<QFE::NETWORK::INetworkCore> runtimeNetwork_;
 		QFE::NETWORK::ConnectHandle runtimeConnection_{};

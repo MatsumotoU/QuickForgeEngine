@@ -9,6 +9,7 @@
 #include "CollisionTriggerComponent.h"
 #include "EventComponent.h"
 #include "InputMovementComponent.h"
+#include "InputControlComponent.h"
 #include "MaterialComponent.h"
 #include "ModelRenderComponent.h"
 #include "SkeletonAnimationComponent.h"
@@ -62,6 +63,7 @@ namespace QFE {
 			registry.RegisterComponent<SCENE::SEComponent>("SEComponent", "Audio") &&
 			registry.RegisterComponent<SCENE::ScriptComponent>("ScriptComponent", "Legacy") &&
 			registry.RegisterComponent<COMPONENTS::InputMovementComponent>("InputMovementComponent", "Behavior") &&
+			registry.RegisterComponent<COMPONENTS::InputControlComponent>("InputControlComponent", "Behavior") &&
 			registry.RegisterComponent<SCENE::SplineMovementComponent>("SplineMovementComponent", "Behavior") &&
 			registry.RegisterComponent<SCENE::SplineMoveToPointComponent>("SplineMoveToPointComponent", "Behavior") &&
 			registry.RegisterComponent<SCENE::EventComponent>("EventComponent", "Behavior") &&

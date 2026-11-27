@@ -7,6 +7,7 @@
 #include "components/SceneControlComponent.h"
 #include "components/SceneSpawnComponent.h"
 #include "components/EventComponent.h"
+#include "components/InputControlComponent.h"
 #include "framework/scene/SceneChangeSystem.h"
 #include "framework/scene/SceneCoreFramework.h"
 #include "framework/scene/CollisionTriggerSystem.h"
@@ -35,6 +36,7 @@ int main(int argc, char** argv) {
 	registry->RegisterComponent<QFE::SCENE::SceneControlComponent>("SceneControlComponent");
 	registry->RegisterComponent<QFE::SCENE::SceneSpawnComponent>("SceneSpawnComponent");
 	registry->RegisterComponent<QFE::SCENE::EventComponent>("EventComponent");
+	registry->RegisterComponent<QFE::COMPONENTS::InputControlComponent>("InputControlComponent");
 	registry->Freeze();
 	QFE::SCENE::SceneManager scenes(registry);
 	scenes.Initialize();
@@ -43,6 +45,16 @@ int main(int argc, char** argv) {
 	auto* main = scenes.GetSceneEntityManager(QFE::SCENE::MainSceneId);
 	auto* menu = scenes.GetSceneEntityManager(id);
 	if (!main || !menu || main == menu) return 4;
+	// 別シーンの入力制御もゲーム全体に適用され、対象外の操作は使える。
+	const auto inputControlId = menu->CreateEntity();
+	auto& inputControl = menu->AddDefaultComponent<QFE::COMPONENTS::InputControlComponent>(inputControlId);
+	inputControl.inputEnabled = false;
+	inputControl.affectAllActions = false;
+	inputControl.actions = { "Shot" };
+	if (QFE::FRAMEWORK::IsGameActionEnabled(scenes, "Shot") ||
+		!QFE::FRAMEWORK::IsGameActionEnabled(scenes, "Up")) return 40;
+	inputControl.inputEnabled = true;
+	if (!QFE::FRAMEWORK::IsGameActionEnabled(scenes, "Shot")) return 41;
 	menu->CreateEntity();
 	const auto mainCount = main->GetActiveEntityIds().size();
 	const auto mainRevision = scenes.GetSceneRevision(QFE::SCENE::MainSceneId);

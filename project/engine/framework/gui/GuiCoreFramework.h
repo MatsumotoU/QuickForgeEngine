@@ -1,6 +1,8 @@
 #pragma once
 #include <memory>
 #include <string>
+#include <vector>
+#include "math/MathInclude.h"
 
 // 使う機能一覧
 namespace QFE::WINDOW {
@@ -15,6 +17,15 @@ namespace QFE::GUI {
 
 /// @brief フレームワーク
 namespace QFE::FRAMEWORK {
+	/// @brief 3D のデバッグ線。描画先ごとのカメラで画面へ投影する。
+	struct DebugLine {
+		MATH::Vector3 start;
+		MATH::Vector3 end;
+		MATH::Vector4 color;
+	};
+	/// @brief 指定した画像範囲へ ImGui で線を重ねる。実行画面では foreground を使う。
+	void DrawDebugLines(const std::vector<DebugLine>& lines, const MATH::Matrix4x4& viewProjection,
+		const MATH::Vector2& position, const MATH::Vector2& size, bool foreground);
 	/// @brief GUIマネージャを作る関数.グラフィックエンジンとウィンドウマネージャを引数に取ります.ウィンドウ名が空の場合はメインウィンドウのハンドルを取得します.
 	std::unique_ptr<QFE::GUI::IGuiManager> CreateGuiManager(
 		const QFE::GRAPHIC::IGraphicEngine& graphicEngine, const QFE::WINDOW::IGameWindowManager& windowManager, const std::string& windowName = "");

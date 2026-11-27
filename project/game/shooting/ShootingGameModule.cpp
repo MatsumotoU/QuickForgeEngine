@@ -1,4 +1,5 @@
 #include "framework/application/GameModuleApi.h"
+#include "framework/scene/SceneCoreFramework.h"
 
 #include "game/shooting/components/ShootingComponentRegistration.h"
 #include "game/shooting/systems/ShootingSystem.h"
@@ -19,6 +20,7 @@ QFE_GAME_EXPORT void QFE_UpdateGame(
 	float deltaTime) {
 	// ゲーム固有の処理だけを更新し、シーン共通処理はフレームワーク側に任せる。
 	QFE::GAMESYSTEM::AutoScrollSystem(systems, resources, deltaTime);
+	QFE::GAMESYSTEM::EncounterRoomSystem(systems, resources, deltaTime);
 	QFE::GAMESYSTEM::InputMovementSystem(systems, resources, deltaTime);
 	QFE::GAMESYSTEM::PhysicsComponentSystem(systems, resources, deltaTime);
 	QFE::GAMESYSTEM::ShootingPlayerSystem(systems, resources, deltaTime);
@@ -27,6 +29,8 @@ QFE_GAME_EXPORT void QFE_UpdateGame(
 	QFE::GAMESYSTEM::BulletEmitterSystem(systems, resources, deltaTime);
 	QFE::GAMESYSTEM::BulletUpdateSystem(systems, resources, deltaTime);
 	QFE::GAMESYSTEM::CollisionSystem(systems, resources, deltaTime);
+	// 接触による HP 更新を反映した後で、倒された敵を削除予約する。
+	QFE::GAMESYSTEM::RemoveDefeatedEnemies(QFE::FRAMEWORK::GetSceneEntities(*systems.sceneManager));
 	QFE::GAMESYSTEM::MoveLimitSystem(systems, resources, deltaTime);
 	QFE::GAMESYSTEM::PlayerTrackingSystem(systems, resources, deltaTime);
 	QFE::GAMESYSTEM::EnemySpawnerSystem(systems, resources, deltaTime);

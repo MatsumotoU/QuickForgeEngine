@@ -1,10 +1,12 @@
 #include "ImGuiArchive.h"
+#include "ComponentInspectorRegistry.h"
 #include "ecs/entity/EntityManager.h"
 #include "components/ObjectInfoComponent.h"
 #include "components/SplineControlPoint.h"
 #include "components/TransformHierarchy.h"
 #include "framework/assets/AssetsCoreFramework.h"
 #include "framework/scene/SceneCoreFramework.h"
+#include "framework/input/InputFrameWork.h"
 #include "components/ModelRenderComponent.h"
 #include "components/SpriteRenderComponent.h"
 #include "components/ParticleEmitterComponent.h"
@@ -592,7 +594,8 @@ namespace {
 		ImGui::EndCombo();
 	}
 
-	void DrawCollisionActions(QFE::EntityManager* entityManager, uint32_t entityId, nlohmann::json& actions) {
+	void DrawCollisionActions(QFE::EntityManager* entityManager, uint32_t entityId, nlohmann::json& actions,
+		const QFE::EDITOR::ComponentInspectorRegistry* registry) {
 		if (!actions.is_array()) actions = nlohmann::json::array();
 		ImGui::TextUnformatted("Collision Actions");
 		int actionToRemove = -1;
@@ -603,8 +606,16 @@ namespace {
 			const std::string header = "Action " + std::to_string(actionIndex);
 			if (ImGui::TreeNode(header.c_str())) {
 				DrawStringCombo("Timing", action, "timing", { "Enter", "Stay", "Exit" }, "Enter");
-				DrawStringCombo("Action Type", action, "type",
-					{ "PlayTrack", "ToggleTrack", "Destroy", "Spawn", "SceneSpawn", "Parameter" }, "Parameter");
+				const std::string selectedType = action.value("type", std::string("Parameter"));
+				if (ImGui::BeginCombo("Action Type", selectedType.c_str())) {
+					for (const char* option : { "PlayTrack", "ToggleTrack", "Destroy", "Spawn", "SceneSpawn", "Parameter" })
+						if (ImGui::Selectable(option, selectedType == option)) action["type"] = option;
+					if (registry) for (const auto& [name, inspector] : registry->GetCollisionActions()) {
+						(void)inspector;
+						if (ImGui::Selectable(name.c_str(), selectedType == name)) action["type"] = name;
+					}
+					ImGui::EndCombo();
+				}
 				const std::string type = action.value("type", std::string("Parameter"));
 				DrawStringCombo("Target", action, "target",
 					{ "Self", "Other", "EntityReference" }, "Self");
@@ -614,10 +625,27 @@ namespace {
 					action["targetUuid"] = targetUuid;
 				}
 
-				if (type == "Parameter") {
+				if (registry && registry->DrawCollisionAction(type, action)) {
+					// ゲームが登録した処理の設定は、そのゲームのエディター側で描画する。
+				} else if (type == "Parameter") {
 					std::string property = action.value("property", std::string{});
 					DrawComponentTypeCombo(entityManager, action);
-					if (ImGui::InputText("Property Path", &property)) action["property"] = property;
+					const std::string component = action.value("component", std::string{});
+					const std::string target = action.value("target", std::string("Self"));
+					uint32_t exampleId = entityId;
+					bool resolved = entityManager && target != "Other";
+					if (resolved && target == "EntityReference")
+						resolved = QFE::SCENE::TryGetEntityIdByUuid(*entityManager, action.value("targetUuid", std::string{}), exampleId);
+					if (entityManager && target == "Other") {
+						// 相手は接触まで未確定なので、同じ種類のコンポーネントを持つオブジェクトから項目を取得する。
+						for (const uint32_t id : entityManager->GetActiveEntityIds()) {
+							if (entityManager->GetComponentRaw(id, component.c_str())) { exampleId = id; resolved = true; break; }
+						}
+					}
+					if (resolved && entityManager->GetComponentRaw(exampleId, component.c_str())) {
+						DrawEventPropertyPathCombo(property, {}, component, entityManager, exampleId);
+						action["property"] = property;
+					} else if (ImGui::InputText("Property Path", &property)) action["property"] = property;
 					DrawStringCombo("Operation", action, "operation",
 						{ "Set", "Add", "Multiply", "Toggle", "SetBits", "ClearBits" }, "Set");
 					if (!action.contains("value")) action["value"] = 0.0f;
@@ -693,12 +721,19 @@ namespace {
 	}
 }
 
-QFE::EDITOR::ImGuiArchive::ImGuiArchive(EntityManager* entityManager, uint32_t entityId, ASSET::ModelLoader* modelLoader) :
-	entityManager_(entityManager), entityId_(entityId), modelLoader_(modelLoader) {
+QFE::EDITOR::ImGuiArchive::ImGuiArchive(EntityManager* entityManager, uint32_t entityId, ASSET::ModelLoader* modelLoader,
+	const std::vector<std::string>* gameTags, const ComponentInspectorRegistry* componentInspectorRegistry,
+	const std::vector<QFE::FRAMEWORK::GameInputAction>* gameInputActions) :
+	entityManager_(entityManager), entityId_(entityId), modelLoader_(modelLoader), gameTags_(gameTags),
+	componentInspectorRegistry_(componentInspectorRegistry), gameInputActions_(gameInputActions) {
 }
 
 void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, bool& value) {
 	ImGui::Checkbox(MakeLabel(name).c_str(), &value);
+	if (componentType_ == "InputControlComponent" && ImGui::IsItemHovered()) {
+		if (name == "inputEnabled") ImGui::SetTooltip("Turn off to block the selected game actions.");
+		else if (name == "affectAllActions") ImGui::SetTooltip("When enabled, inputEnabled controls every game action.");
+	}
 	if (componentType_ == "SceneSpawnComponent" && ImGui::IsItemHovered()) {
 		if (name == "spawnAll") ImGui::SetTooltip("Selects all scenes; does not trigger spawning.");
 		else if (name == "request") ImGui::SetTooltip("Set true to spawn. Set false before triggering again.");
@@ -733,6 +768,15 @@ void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, uint32_t& value
 }
 
 void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, std::string& value) {
+	if (gameInputActions_ && componentType_ == "InputMovementComponent" &&
+		(name == "rightActionName" || name == "leftActionName" || name == "forwardActionName" || name == "backwardActionName")) {
+		if (ImGui::BeginCombo(MakeLabel(name).c_str(), value.empty() ? "None" : value.c_str())) {
+			if (ImGui::Selectable("None", value.empty())) value.clear();
+			for (const auto& action : *gameInputActions_) if (ImGui::Selectable(action.name.c_str(), value == action.name)) value = action.name;
+			ImGui::EndCombo();
+		}
+		return;
+	}
 	if (componentType_ == "SceneControlComponent" && name == "scenePath") {
 		DrawSceneAssetCombo(MakeLabel(name), value);
 		return;
@@ -774,6 +818,58 @@ void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, std::string& va
 }
 
 void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, std::vector<std::string>& value) {
+	if (gameInputActions_ && componentType_ == "InputControlComponent" && name == "actions") {
+		std::string preview;
+		for (const auto& action : value) { if (!preview.empty()) preview += ", "; preview += action; }
+		if (preview.empty()) preview = "None";
+		if (ImGui::BeginCombo("Actions", preview.c_str())) {
+			for (const auto& action : *gameInputActions_) {
+				const bool selected = std::find(value.begin(), value.end(), action.name) != value.end();
+				if (ImGui::Selectable(action.name.c_str(), selected, ImGuiSelectableFlags_DontClosePopups)) {
+					if (selected) value.erase(std::remove(value.begin(), value.end(), action.name), value.end());
+					else value.push_back(action.name);
+				}
+			}
+			// 設定から削除済みの名前も勝手に消さず、明示的に解除できるようにする。
+			for (size_t i = 0; i < value.size();) {
+				const bool exists = std::any_of(gameInputActions_->begin(), gameInputActions_->end(), [&](const auto& item) { return item.name == value[i]; });
+				if (exists) { ++i; continue; }
+				const std::string label = value[i] + " (Missing)";
+				if (ImGui::Selectable(label.c_str(), true, ImGuiSelectableFlags_DontClosePopups)) value.erase(value.begin() + static_cast<std::ptrdiff_t>(i));
+				else ++i;
+			}
+			ImGui::EndCombo();
+		}
+		return;
+	}
+	if (gameTags_ && ((componentType_ == "ObjectInfoComponent" && name == "tags") ||
+		(componentType_ == "CollisionTriggerComponent" && name == "acceptedTags"))) {
+		std::string preview;
+		for (const auto& tag : value) {
+			if (!preview.empty()) preview += ", ";
+			preview += tag;
+		}
+		if (preview.empty()) preview = componentType_ == "CollisionTriggerComponent" ? "Any tag" : "None";
+		if (ImGui::BeginCombo(MakeLabel(name).c_str(), preview.c_str())) {
+			for (const auto& tag : *gameTags_) {
+				const bool selected = std::find(value.begin(), value.end(), tag) != value.end();
+				if (ImGui::Selectable(tag.c_str(), selected, ImGuiSelectableFlags_DontClosePopups)) {
+					if (selected) value.erase(std::remove(value.begin(), value.end(), tag), value.end());
+					else value.push_back(tag);
+				}
+			}
+			// 一覧から削除されたタグは勝手に消さず、ここから解除できるようにする。
+			for (size_t i = 0; i < value.size();) {
+				if (std::find(gameTags_->begin(), gameTags_->end(), value[i]) != gameTags_->end()) { ++i; continue; }
+				const std::string label = value[i] + " (Missing)";
+				if (ImGui::Selectable(label.c_str(), true, ImGuiSelectableFlags_DontClosePopups))
+					value.erase(value.begin() + static_cast<std::ptrdiff_t>(i));
+				else ++i;
+			}
+			ImGui::EndCombo();
+		}
+		return;
+	}
 	if (componentType_ == "SceneSpawnComponent" && name == "scenePaths") {
 		ImGui::PushID(name.c_str());
 		ImGui::TextUnformatted("Scenes");
@@ -1062,7 +1158,7 @@ void QFE::EDITOR::ImGuiArchive::Process(const std::string& name, nlohmann::json&
 		return;
 	}
 	if (name == "actions") {
-		DrawCollisionActions(entityManager_, entityId_, value);
+		DrawCollisionActions(entityManager_, entityId_, value, componentInspectorRegistry_);
 		return;
 	}
 	DrawJsonValue(MakeLabel(name).c_str(), value);

@@ -9,6 +9,8 @@ namespace QFE::FRAMEWORK {
 	uint32_t CreateSceneDirectionalLight(SCENE::SceneManager& scene);
 	// ECS の所有権はシーンに残る。参照はシーンマネージャーの寿命内で使用する。
 	EntityManager& GetSceneEntities(SCENE::SceneManager& scene);
+	/// @brief 読み込まれた全シーンの入力制御を合わせ、アクションが許可されているか調べる。
+	bool IsGameActionEnabled(SCENE::SceneManager& scene, const std::string& action);
 	// 未保存時は空文字列。参照はシーンの変更をまたいで保持しない。
 	const std::string& GetScenePath(const SCENE::SceneManager& scene);
 	void LoadScene(SCENE::SceneManager& scene, const std::string& path);

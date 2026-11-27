@@ -4,7 +4,14 @@
 
 #include "resources/shaders/shaderStructs/hlslTypeToCpp.h"
 
+namespace QFE { class EntityManager; }
+
 namespace QFE::GAMESYSTEM {
+	/// @brief HP が 0 の敵を削除する。
+	void RemoveDefeatedEnemies(QFE::EntityManager& entityManager);
+	/// @brief 部屋への入室と敵の消滅に応じて扉を開閉する。
+	bool EncounterRoomSystem(QFE::FRAMEWORK::WindowsQuickForgeEngineSystems& systems,
+		QFE::FRAMEWORK::WindowsEngineResources& resources, float deltaTime);
 	/// @brief 入力に応じて位置を移動するか、PhysicsComponentへ力を加える。
 	bool InputMovementSystem(
 		QFE::FRAMEWORK::WindowsQuickForgeEngineSystems& systems,

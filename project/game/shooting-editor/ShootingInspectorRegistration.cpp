@@ -5,6 +5,13 @@
 #include "game/shooting/components/BulletEmitterComponent.h"
 #include "game/shooting/components/InputBulletEmitterTriggerComponent.h"
 #include "game/shooting/components/PeriodicBulletEmitterTriggerComponent.h"
+#include "game/shooting/components/EncounterRoomComponent.h"
+#include "components/TransformHierarchy.h"
+#include "components/AABBColliderComponent.h"
+#include "components/OBBColliderComponent.h"
+#include "components/SphereColliderComponent.h"
+#include "framework/application/ColliderDebugDraw.h"
+#include "framework/gui/GuiCoreFramework.h"
 
 #include <imgui/imgui.h>
 #include <imgui_stdlib.h>
@@ -14,6 +21,95 @@
 
 namespace {
 	constexpr float kDragSpeed = 0.1f;
+
+	void DrawHealthAction(nlohmann::json& action) {
+		std::string source = action.value("amountSource", std::string("Fixed"));
+		const char* preview = source == "OtherAttackPower" ? "Other's attack power" : "Fixed";
+		if (ImGui::BeginCombo("Amount Source", preview)) {
+			if (ImGui::Selectable("Fixed", source == "Fixed")) action["amountSource"] = "Fixed";
+			if (ImGui::Selectable("Other's attack power", source == "OtherAttackPower")) action["amountSource"] = "OtherAttackPower";
+			ImGui::EndCombo();
+		}
+		if (action.value("amountSource", std::string("Fixed")) == "Fixed") {
+			uint32_t amount = action.value("amount", uint32_t{ 1 });
+			if (!action.contains("amount")) action["amount"] = amount;
+			if (ImGui::InputScalar("Amount", ImGuiDataType_U32, &amount)) action["amount"] = amount;
+		} else {
+			ImGui::TextDisabled("Uses the status of the other object in the collision.");
+		}
+	}
+
+	void DrawEncounterRooms(QFE::EntityManager& entities, const QFE::MATH::Matrix4x4& viewProjection,
+		const ImVec2& imagePosition, const ImVec2& imageSize) {
+		using namespace QFE;
+		auto* draw = ImGui::GetWindowDrawList();
+		std::vector<FRAMEWORK::DebugLine> lines;
+		draw->PushClipRect(imagePosition, { imagePosition.x + imageSize.x, imagePosition.y + imageSize.y }, true);
+		const auto project = [&](const MATH::Vector3& position, ImVec2& screen) {
+			const auto clip = MATH::Vector4::EulerTransform({ position.x, position.y, position.z, 1.0f }, viewProjection);
+			if (clip.w <= 1.0e-5f || clip.z < 0.0f || clip.z > clip.w) return false;
+			screen = { imagePosition.x + (clip.x / clip.w + 1.0f) * 0.5f * imageSize.x,
+				imagePosition.y + (1.0f - clip.y / clip.w) * 0.5f * imageSize.y };
+			return true;
+		};
+		const auto line = [&](const MATH::Vector3& start, const MATH::Vector3& end, ImU32 color) {
+			const ImVec4 rgba = ImGui::ColorConvertU32ToFloat4(color);
+			lines.push_back({ start, end, { rgba.x, rgba.y, rgba.z, rgba.w } });
+		};
+		const auto label = [&](const MATH::Vector3& position, const char* text, ImU32 color) {
+			ImVec2 p;
+			if (project(position, p)) draw->AddText(p, color, text);
+		};
+		entities.Each<STG::EncounterRoomComponent>([&](uint32_t id, STG::EncounterRoomComponent& room) {
+			if (!entities.HasComponent<SCENE::TransformComponent>(id)) return;
+			const auto world = SCENE::GetWorldMatrix(entities, id);
+			MATH::EulerTransform bounds{};
+			bounds.translate = { world.m[3][0], world.m[3][1], world.m[3][2] };
+			const ImU32 roomColor = IM_COL32(255, 100, 230, 255);
+			FRAMEWORK::ColliderDebugDraw::Box(bounds, room.halfExtents, false,
+				[&](const auto& a, const auto& b) { line(a, b, roomColor); });
+			label(bounds.translate, "Encounter entry area", roomColor);
+			int missingDoors = 0;
+			for (size_t index = 0; index < room.doors.size(); ++index) {
+				const auto& setting = room.doors[index];
+				uint32_t doorId = UINT32_MAX;
+				if (!SCENE::TryGetEntityIdByUuid(entities, setting.entity.uuid, doorId)) { ++missingDoors; continue; }
+				const auto* transform = entities.GetComponentPtr<SCENE::TransformComponent>(doorId);
+				if (!transform) { ++missingDoors; continue; }
+				auto closed = transform->transform;
+				if (room.initialized && index < room.closedDoorPositions.size()) closed.translate = room.closedDoorPositions[index];
+				auto opened = closed;
+				opened.translate += setting.openOffset;
+				const auto drawDoor = [&](const MATH::EulerTransform& pose, ImU32 color, const char* text) {
+					const auto drawLine = [&](const auto& a, const auto& b) { line(a, b, color); };
+					if (const auto* box = entities.GetComponentPtr<SCENE::AABBColliderComponent>(doorId))
+						FRAMEWORK::ColliderDebugDraw::Box(pose, box->halfExtents, false, drawLine);
+					else if (const auto* orientedBox = entities.GetComponentPtr<SCENE::OBBColliderComponent>(doorId))
+						FRAMEWORK::ColliderDebugDraw::Box(pose, orientedBox->halfExtents, true, drawLine);
+					else if (const auto* sphere = entities.GetComponentPtr<SCENE::SphereColliderComponent>(doorId))
+						FRAMEWORK::ColliderDebugDraw::Sphere(pose.translate, sphere->radius, drawLine);
+					else
+						FRAMEWORK::ColliderDebugDraw::Box(pose, { 0.2f, 0.2f, 0.2f }, false, drawLine);
+					label(pose.translate, text, color);
+				};
+				// 現行の衝突処理は扉のローカル Transform を使うため、同じ位置を表示する。
+				drawDoor(closed, IM_COL32(255, 170, 40, 255), "Door closed");
+				drawDoor(opened, IM_COL32(80, 220, 255, 255), "Door open");
+				line(closed.translate, opened.translate, IM_COL32(255, 255, 255, 200));
+			}
+			if (missingDoors > 0) {
+				ImVec2 p;
+				if (project(bounds.translate, p)) {
+					p.y += 16.0f;
+					const std::string message = "Missing / unassigned doors: " + std::to_string(missingDoors);
+					draw->AddText(p, IM_COL32(255, 90, 90, 255), message.c_str());
+				}
+			}
+		});
+		draw->PopClipRect();
+		FRAMEWORK::DrawDebugLines(lines, viewProjection, { imagePosition.x, imagePosition.y },
+			{ imageSize.x, imageSize.y }, false);
+	}
 
 	void DrawEmitterPatternCombo(
 		const char* label,
@@ -87,7 +183,8 @@ namespace {
 		}
 	}
 
-	void DrawBulletEmitterInspector(QFE::EntityManager& entityManager, uint32_t entityId) {
+	void DrawBulletEmitterInspector(QFE::EntityManager& entityManager, uint32_t entityId,
+		const std::vector<QFE::FRAMEWORK::GameInputAction>*) {
 		auto& component = entityManager.GetComponent<QFE::STG::BulletEmitterComponent>(entityId);
 		int patternToRemove = -1;
 		for (std::size_t index = 0; index < component.patterns.size(); ++index) {
@@ -133,7 +230,8 @@ namespace {
 		ImGui::Checkbox("Emit Request", &component.emitRequest);
 	}
 
-	void DrawInputTriggerInspector(QFE::EntityManager& entityManager, uint32_t entityId) {
+	void DrawInputTriggerInspector(QFE::EntityManager& entityManager, uint32_t entityId,
+		const std::vector<QFE::FRAMEWORK::GameInputAction>* actions) {
 		auto& component =
 			entityManager.GetComponent<QFE::STG::InputBulletEmitterTriggerComponent>(entityId);
 		int triggerToRemove = -1;
@@ -148,7 +246,12 @@ namespace {
 			}
 			if (expanded) {
 				ImGui::Checkbox("Enabled", &trigger.enabled);
-				ImGui::InputText("Input Action", &trigger.inputActionName);
+				if (actions && ImGui::BeginCombo("Input Action", trigger.inputActionName.empty() ? "None" : trigger.inputActionName.c_str())) {
+					if (ImGui::Selectable("None", trigger.inputActionName.empty())) trigger.inputActionName.clear();
+					for (const auto& action : *actions)
+						if (ImGui::Selectable(action.name.c_str(), trigger.inputActionName == action.name)) trigger.inputActionName = action.name;
+					ImGui::EndCombo();
+				}
 				ImGui::DragScalar("Mouse Button", ImGuiDataType_S32, &trigger.mouseButton, 1.0f);
 				ImGui::DragScalar(
 					"Gamepad Button Mask", ImGuiDataType_U32, &trigger.gamePadButton, 1.0f);
@@ -185,7 +288,8 @@ namespace {
 		}
 	}
 
-	void DrawPeriodicTriggerInspector(QFE::EntityManager& entityManager, uint32_t entityId) {
+	void DrawPeriodicTriggerInspector(QFE::EntityManager& entityManager, uint32_t entityId,
+		const std::vector<QFE::FRAMEWORK::GameInputAction>*) {
 		auto& component =
 			entityManager.GetComponent<QFE::STG::PeriodicBulletEmitterTriggerComponent>(entityId);
 		int triggerToRemove = -1;
@@ -219,7 +323,10 @@ namespace {
 
 bool QFE::GAME::RegisterShootingGameInspectors(
 	EDITOR::ComponentInspectorRegistry& registry) {
+	registry.RegisterSceneOverlay(&DrawEncounterRooms);
 	return
+		registry.RegisterCollisionAction("IncreaseHealth", &DrawHealthAction) &&
+		registry.RegisterCollisionAction("DecreaseHealth", &DrawHealthAction) &&
 		registry.Register("BulletEmitterComponent", &DrawBulletEmitterInspector) &&
 		registry.Register("InputBulletEmitterTriggerComponent", &DrawInputTriggerInspector) &&
 		registry.Register("PeriodicBulletEmitterTriggerComponent", &DrawPeriodicTriggerInspector);

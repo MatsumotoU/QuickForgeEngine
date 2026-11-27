@@ -160,8 +160,8 @@ namespace QFE::INPUT {
 	}
 
 	/** @brief キーコンフィグの追加 */
-	void WindowsInput::AddKeyConfig(const std::string& actionName, uint32_t keyCorde) {
-		keyConfig_.AddKey(actionName, keyCorde);
+	void WindowsInput::AddKeyConfig(const std::string& actionName, uint32_t keyCode) {
+		keyConfig_.AddKey(actionName, keyCode);
 	}
 
 	/** @brief キーコンフィグのクリア */

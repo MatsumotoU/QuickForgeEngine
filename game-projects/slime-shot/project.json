@@ -1,4 +1,11 @@
 {
+    "game_config": {
+        "tags": [
+            "Default",
+            "Player",
+            "Enemy"
+        ]
+    },
     "name": "slime-shot",
     "start_scene": "MainGameScene.scene",
     "version": 1

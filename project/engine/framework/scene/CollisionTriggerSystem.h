@@ -29,5 +29,6 @@ namespace QFE::FRAMEWORK {
 	/// Spawn callback receives an assets-relative entity path and the selected target entity.
 	void ApplyCollisionTriggerCommands(EntityManager& entityManager,
 		const std::vector<CollisionTriggerCommand>& commands,
-		const std::function<void(const std::string&, uint32_t)>& spawn);
+		const std::function<void(const std::string&, uint32_t)>& spawn,
+		const std::function<void(const CollisionTriggerCommand&)>& gameAction = {});
 }

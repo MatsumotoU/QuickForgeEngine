@@ -11,6 +11,8 @@
 #include "graphics/dx12/pipeline/pso/PipelineDescTypes.h"
 #include <d3d12.h>
 #include "EngineConfig.h"
+#include "framework/gui/GuiCoreFramework.h"
+#include "framework/input/InputFrameWork.h"
 
 namespace QFE::FRAMEWORK {
 	/// @brief Windows版QuickForgeEngineのアプリケーションに必要なリソースを管理するクラス
@@ -113,5 +115,8 @@ namespace QFE::FRAMEWORK {
 		// 編集時に表示する補助線は種類ごとに切り替える。
 		bool showCameraRooms = true;
 		bool showSplinePaths = true;
+		// 3D で作った補助線を各ビューの ImGui 描画へ渡す。毎フレーム作り直す。
+		std::vector<DebugLine> debugLines;
+		std::vector<GameInputAction> inputActions = DefaultGameInputActions();
 	};
 }

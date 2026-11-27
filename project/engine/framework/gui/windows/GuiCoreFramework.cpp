@@ -8,6 +8,51 @@
 #include "graphics/dx12/vram/descriptors/DescriptorHeapManager.h"
 #include "graphics/dx12/command/DirectXCommandManager.h"
 #include "graphics/dx12/RenderPass.h"
+#include <imgui.h>
+#include <cmath>
+
+namespace {
+	// 視錐台の外側で線分を切り、画面手前を横切る線が消えたり画面外へ伸びたりしないようにする。
+	bool ClipDebugLine(QFE::MATH::Vector4& a, QFE::MATH::Vector4& b) {
+		const auto distance = [](const QFE::MATH::Vector4& p, int plane) {
+			switch (plane) {
+			case 0: return p.w + p.x;
+			case 1: return p.w - p.x;
+			case 2: return p.w + p.y;
+			case 3: return p.w - p.y;
+			case 4: return p.z;
+			default: return p.w - p.z;
+			}
+		};
+		for (int plane = 0; plane < 6; ++plane) {
+			const float da = distance(a, plane), db = distance(b, plane);
+			if (!std::isfinite(da) || !std::isfinite(db) || (da < 0.0f && db < 0.0f)) return false;
+			if (da < 0.0f) a = a + (b - a) * (da / (da - db));
+			else if (db < 0.0f) b = b + (a - b) * (db / (db - da));
+		}
+		return a.w > 1.0e-6f && b.w > 1.0e-6f;
+	}
+}
+
+void QFE::FRAMEWORK::DrawDebugLines(const std::vector<DebugLine>& lines,
+	const MATH::Matrix4x4& viewProjection, const MATH::Vector2& position,
+	const MATH::Vector2& size, bool foreground) {
+	if (size.x <= 0.0f || size.y <= 0.0f || lines.empty()) return;
+	auto* draw = foreground ? ImGui::GetForegroundDrawList() : ImGui::GetWindowDrawList();
+	draw->PushClipRect({ position.x, position.y }, { position.x + size.x, position.y + size.y }, true);
+	for (const auto& line : lines) {
+		auto a = MATH::Vector4::EulerTransform({ line.start.x, line.start.y, line.start.z, 1.0f }, viewProjection);
+		auto b = MATH::Vector4::EulerTransform({ line.end.x, line.end.y, line.end.z, 1.0f }, viewProjection);
+		if (!ClipDebugLine(a, b)) continue;
+		const auto screen = [&](const MATH::Vector4& p) {
+			return ImVec2(position.x + (p.x / p.w + 1.0f) * 0.5f * size.x,
+				position.y + (1.0f - p.y / p.w) * 0.5f * size.y);
+		};
+		const ImU32 color = ImGui::ColorConvertFloat4ToU32({ line.color.x, line.color.y, line.color.z, line.color.w });
+		draw->AddLine(screen(a), screen(b), color);
+	}
+	draw->PopClipRect();
+}
 
 std::unique_ptr<QFE::GUI::IGuiManager> QFE::FRAMEWORK::CreateGuiManager(
 	const QFE::GRAPHIC::IGraphicEngine& graphicEngine,

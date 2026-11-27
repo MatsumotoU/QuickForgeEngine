@@ -4,6 +4,8 @@
 #include "BulletComponent.h"
 #include "BulletEmitterComponent.h"
 #include "EnemyAIComponent.h"
+#include "StatusComponent.h"
+#include "EncounterRoomComponent.h"
 #include "EntitySpawnerComponent.h"
 #include "HealthComponent.h"
 #include "InputBulletEmitterTriggerComponent.h"

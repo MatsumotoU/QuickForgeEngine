@@ -17,7 +17,7 @@ namespace QFE::STG {
 	struct InputBulletEmitterTriggerSetting {
 		bool enabled = true;
 		std::string inputActionName = "Shot"; ///< 空文字ならキーボード入力を使用しない
-		int32_t mouseButton = -1; ///< 0以上なら使用する
+		int32_t mouseButton = -1; ///< 0～3なら使用する。-1 は未使用。
 		uint32_t gamePadButton = 0; ///< XInputボタンマスク。0なら使用しない
 		uint32_t triggerMode = BulletEmitterInputPress;
 		float repeatInterval = 0.2f; ///< Press時の連続起動間隔。0以下なら毎フレーム

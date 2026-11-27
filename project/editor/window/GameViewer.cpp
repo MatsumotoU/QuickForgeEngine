@@ -80,6 +80,8 @@ void QFE::EDITOR::GameViewer::Draw(std::set<uint32_t>&, EditorCommandList& comma
 	// 6. ID を使って描画
 	const ImVec2 imagePosition = ImGui::GetCursorScreenPos();
 	ImGui::Image(sceneTextureId_, renderSize);
+	if (debugLines_) FRAMEWORK::DrawDebugLines(*debugLines_, dropViewProjection_,
+		{ imagePosition.x, imagePosition.y }, { renderSize.x, renderSize.y }, false);
 	AcceptAssetDrop(sceneManager_, commandList, imagePosition, renderSize, width_, height_,
 		MATH::Matrix4x4::MakeIdentity4x4(), dropViewProjection_);
 

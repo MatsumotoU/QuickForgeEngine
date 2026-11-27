@@ -3,10 +3,25 @@
 #include <memory>
 #include <string>
 #include <cstdint>
+#include <vector>
+#include <filesystem>
 
 namespace QFE::WINDOW { class IGameWindowManager; }
 
 namespace QFE::FRAMEWORK {
+	/// @brief ひとつの操作に複数キーと各デバイスのボタンを割り当てる。
+	struct GameInputAction {
+		std::string name;
+		std::vector<std::string> keys;
+		int32_t mouseButton = -1;
+		uint32_t gamepadButton = 0;
+	};
+	std::vector<GameInputAction> DefaultGameInputActions();
+	bool LoadGameInputActions(const std::filesystem::path& projectFile, std::vector<GameInputAction>& actions);
+	std::vector<std::string> GameInputKeyNames();
+	bool GetActionPress(QFE::INPUT::InputInterface* input, const std::vector<GameInputAction>& actions, const std::string& name);
+	bool GetActionTrigger(QFE::INPUT::InputInterface* input, const std::vector<GameInputAction>& actions, const std::string& name);
+	bool GetActionRelease(QFE::INPUT::InputInterface* input, const std::vector<GameInputAction>& actions, const std::string& name);
 	// ゲーム操作は従来どおりアクション名で指定する。
 	// エディターの固定キーだけは設定に左右されないため、OS 固有のキーコードと分離する。
 	enum class InputKey { LeftControl, Space };

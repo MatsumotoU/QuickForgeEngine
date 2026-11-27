@@ -10,19 +10,28 @@
 #include "framework/assets/AssetsCoreFramework.h"
 
 #include <algorithm>
+#include <cmath>
 #include <vector>
 
 namespace {
-	// 入力移動する球だけを静止した箱に対して止める。イベント専用のトリガーは移動を妨げない。
-	QFE::MATH::Vector3 MoveInputSphere(QFE::EntityManager& entities, uint32_t id,
+	// 入力移動するコライダーを静止した箱に対して止める。トリガーは移動を妨げない。
+	QFE::MATH::Vector3 MoveInputCollider(QFE::EntityManager& entities, uint32_t id,
 		const QFE::MATH::Vector3& movement, QFE::MATH::Vector3* velocity = nullptr) {
 		using namespace QFE::GAMESYSTEM::CollisionShapes;
 		auto* transform = entities.GetComponentPtr<QFE::SCENE::TransformComponent>(id);
-		auto* sphere = entities.GetComponentPtr<QFE::SCENE::SphereColliderComponent>(id);
-		if (!transform || !sphere || sphere->radius <= 0.0f) return movement;
+		if (!transform) return movement;
+		Shape moving{};
+		if (const auto* sphere = entities.GetComponentPtr<QFE::SCENE::SphereColliderComponent>(id)) {
+			if (sphere->radius <= 0.0f) return movement;
+			moving = { id, sphere->mask, true, transform->transform.translate, sphere->radius, {}, {} };
+		} else if (const auto* box = entities.GetComponentPtr<QFE::SCENE::AABBColliderComponent>(id)) {
+			moving = MakeBox(id, box->mask, transform->transform, box->halfExtents, false);
+		} else if (const auto* orientedBox = entities.GetComponentPtr<QFE::SCENE::OBBColliderComponent>(id)) {
+			moving = MakeBox(id, orientedBox->mask, transform->transform, orientedBox->halfExtents, true);
+		} else return movement;
 		std::vector<Shape> walls;
 		const auto addWall = [&](uint32_t wallId, uint32_t mask, const QFE::MATH::Vector3& extents, bool oriented) {
-			if (wallId == id || (sphere->mask & mask) != 0 ||
+			if (wallId == id || (moving.mask & mask) != 0 ||
 				entities.HasComponent<QFE::SCENE::CollisionTriggerComponent>(wallId) ||
 				entities.HasComponent<QFE::COMPONENTS::InputMovementComponent>(wallId)) return;
 			const auto* physics = entities.GetComponentPtr<QFE::COMPONENTS::PhysicsComponent>(wallId);
@@ -38,15 +47,36 @@ namespace {
 		});
 		QFE::MATH::Vector3 position = transform->transform.translate;
 		QFE::MATH::Vector3 remaining = movement;
+		if (!moving.sphere) {
+			// 回転した OBB の角が壁に入った場合も、掃引する前に壁の外へ戻す。
+			for (int iteration = 0; iteration < 8; ++iteration) {
+				bool corrected = false;
+				for (const auto& wall : walls) {
+					moving.center = position;
+					float depth = 0.0f;
+					QFE::MATH::Vector3 normal{};
+					if (!BoxPenetration(moving, wall, depth, normal)) continue;
+					position += normal * (depth + 1.0e-5f);
+					if (Dot(remaining, normal) < 0.0f) remaining = remaining - normal * Dot(remaining, normal);
+					if (velocity && Dot(*velocity, normal) < 0.0f) *velocity = *velocity - normal * Dot(*velocity, normal);
+					corrected = true;
+				}
+				if (!corrected) break;
+			}
+		}
 		// 複数の壁が交わる場所でも、それぞれの壁に向かう成分を取り除く。
 		for (int iteration = 0; iteration < 4; ++iteration) {
+			moving.center = position;
 			float firstTime = 1.0f;
 			QFE::MATH::Vector3 normal{};
 			bool hit = false;
 			for (const auto& wall : walls) {
 				float time;
 				QFE::MATH::Vector3 candidateNormal{};
-				if (SweepSphereBox(position, sphere->radius, remaining, wall, time, candidateNormal) && time <= firstTime) {
+				const bool hitWall = moving.sphere
+					? SweepSphereBox(position, moving.radius, remaining, wall, time, candidateNormal)
+					: SweepBoxBox(moving, remaining, wall, time, candidateNormal);
+				if (hitWall && time <= firstTime) {
 					firstTime = time; normal = candidateNormal; hit = true;
 				}
 			}
@@ -82,12 +112,161 @@ namespace {
 				.RequestEmit(patternIndex);
 		}
 	}
+
+	void ApplyGameCollisionAction(QFE::EntityManager& entities,
+		const QFE::FRAMEWORK::CollisionTriggerCommand& command) {
+		const auto& action = command.action;
+		const std::string type = action.value("type", std::string{});
+		if (type != "IncreaseHealth" && type != "DecreaseHealth") return;
+		uint32_t target = command.selfEntityId;
+		const auto targetType = QFE::FRAMEWORK::ParameterTargetFromString(action.value("target", std::string("Self")));
+		if (targetType == QFE::FRAMEWORK::ParameterTarget::Other) target = command.otherEntityId;
+		else if (targetType == QFE::FRAMEWORK::ParameterTarget::EntityReference &&
+			!QFE::SCENE::TryGetEntityIdByUuid(entities, action.value("targetUuid", std::string{}), target)) return;
+		if (!entities.IsActiveEntity(target)) return;
+		auto* status = entities.GetComponentPtr<QFE::STG::StatusComponent>(target);
+		if (!status) return;
+		uint32_t amount = 0;
+		if (action.value("amountSource", std::string("Fixed")) == "OtherAttackPower") {
+			// 接触相手の攻撃力を使用し、相手がいない・ステータスを持たない場合は何もしない。
+			if (!entities.IsActiveEntity(command.otherEntityId)) return;
+			const auto* other = entities.GetComponentPtr<QFE::STG::StatusComponent>(command.otherEntityId);
+			if (!other) return;
+			amount = other->attackPower;
+		} else if (action.contains("amount") && action["amount"].is_number_integer()) {
+			const int64_t value = action["amount"].get<int64_t>();
+			if (value < 0 || static_cast<uint64_t>(value) > UINT32_MAX) return;
+			amount = static_cast<uint32_t>(value);
+		}
+		if (type == "DecreaseHealth") status->health = amount >= status->health ? 0 : status->health - amount;
+		else {
+			const uint64_t increased = static_cast<uint64_t>(status->health) + amount;
+			status->health = static_cast<uint32_t>((std::min)(increased, static_cast<uint64_t>(UINT32_MAX)));
+		}
+	}
+}
+
+void QFE::GAMESYSTEM::RemoveDefeatedEnemies(QFE::EntityManager& entityManager) {
+	std::vector<uint32_t> defeated;
+	entityManager.Each<QFE::STG::StatusComponent>([&](uint32_t id, QFE::STG::StatusComponent& status) {
+		if (status.health != 0) return;
+		const auto* info = entityManager.GetComponentPtr<QFE::SCENE::ObjectInfoComponent>(id);
+		// ステータスはプレイヤーにも使うため、敵タグがあるエンティティだけを消す。
+		if (info && std::find(info->tags.begin(), info->tags.end(), "Enemy") != info->tags.end())
+			defeated.push_back(id);
+	});
+	// 列挙中の削除を避け、既存のフレーム終了時の削除処理に委ねる。
+	for (const uint32_t id : defeated) entityManager.RemoveEntity(id);
+}
+
+bool QFE::GAMESYSTEM::EncounterRoomSystem(
+	QFE::FRAMEWORK::WindowsQuickForgeEngineSystems& systems,
+	QFE::FRAMEWORK::WindowsEngineResources& resources, float deltaTime) {
+	auto& entities = QFE::FRAMEWORK::GetSceneEntities(*systems.sceneManager);
+	std::vector<uint32_t> roomIds;
+	entities.Each<QFE::STG::EncounterRoomComponent>([&](uint32_t id, QFE::STG::EncounterRoomComponent&) {
+		roomIds.push_back(id);
+	});
+	// 生成中はコンポーネントの格納領域が変わり得るため、部屋の列挙を先に終える。
+	for (const uint32_t roomId : roomIds) {
+		auto* room = entities.GetComponentPtr<QFE::STG::EncounterRoomComponent>(roomId);
+		if (!room || !room->enabled) continue;
+		const auto* roomTransform = entities.GetComponentPtr<QFE::SCENE::TransformComponent>(roomId);
+		uint32_t playerId = UINT32_MAX;
+		if (!roomTransform || !QFE::SCENE::TryGetEntityIdByUuid(entities, room->player.uuid, playerId) ||
+			!entities.HasComponent<QFE::SCENE::TransformComponent>(playerId)) continue;
+		const auto center = GetWorldPosition(entities, roomId);
+
+		if (!room->initialized) {
+			std::vector<uint32_t> doors;
+			std::vector<QFE::MATH::Vector3> positions;
+			std::vector<uint32_t> enemies;
+			bool valid = true;
+			for (const auto& door : room->doors) {
+				uint32_t id = UINT32_MAX;
+				if (!QFE::SCENE::TryGetEntityIdByUuid(entities, door.entity.uuid, id) ||
+					!entities.HasComponent<QFE::SCENE::TransformComponent>(id)) { valid = false; break; }
+				doors.push_back(id);
+				positions.push_back(entities.GetComponent<QFE::SCENE::TransformComponent>(id).transform.translate);
+			}
+			for (const auto& enemy : room->enemies) {
+				uint32_t id = UINT32_MAX;
+				if (!QFE::SCENE::TryGetEntityIdByUuid(entities, enemy.entity.uuid, id)) { valid = false; break; }
+				enemies.push_back(id);
+			}
+			if (!valid) continue;
+			room->doorIds = std::move(doors);
+			room->closedDoorPositions = std::move(positions);
+			room->enemyIds = std::move(enemies);
+			room->initialized = true;
+			// エディターで配置した閉位置を基準に、開始前は通れる位置へ移す。
+			for (size_t i = 0; i < room->doorIds.size(); ++i) {
+				entities.GetComponent<QFE::SCENE::TransformComponent>(room->doorIds[i]).transform.translate =
+					room->closedDoorPositions[i] + room->doors[i].openOffset;
+			}
+		}
+		if (room->cleared) continue;
+		if (!room->started) {
+			const auto relative = GetWorldPosition(entities, playerId) - center;
+			if (std::abs(relative.x) > std::abs(room->halfExtents.x) ||
+				std::abs(relative.y) > std::abs(room->halfExtents.y) ||
+				std::abs(relative.z) > std::abs(room->halfExtents.z)) continue;
+			room->started = true;
+			room->doorCloseElapsed = 0.0f;
+			const auto spawns = room->spawns;
+			for (const auto& spawn : spawns) {
+				const std::filesystem::path relativePath(std::u8string(
+					reinterpret_cast<const char8_t*>(spawn.entityPath.data()), spawn.entityPath.size()));
+				const std::filesystem::path base(std::u8string(
+					reinterpret_cast<const char8_t*>(resources.assetDir.data()), resources.assetDir.size()));
+				const auto path = base / relativePath;
+				uint32_t spawnedId = UINT32_MAX;
+				if (!relativePath.empty() && !relativePath.is_absolute() &&
+					QFE::FRAMEWORK::ASSETS::IsPathWithin(path, base)) {
+					const auto utf8 = path.generic_u8string();
+					spawnedId = QFE::FRAMEWORK::LoadSceneEntity(*systems.sceneManager,
+						std::string(reinterpret_cast<const char*>(utf8.data()), utf8.size()));
+				}
+				room = entities.GetComponentPtr<QFE::STG::EncounterRoomComponent>(roomId);
+				if (!room) break;
+				if (spawnedId == UINT32_MAX) {
+					// 生成失敗を全滅と誤認して扉を開かない。
+					room->spawnFailed = true;
+					QFE_LOG("Encounter room enemy spawn failed: " + spawn.entityPath);
+					continue;
+				}
+				room->enemyIds.push_back(spawnedId);
+				if (auto* transform = entities.GetComponentPtr<QFE::SCENE::TransformComponent>(spawnedId))
+					transform->transform.translate = center + spawn.offset;
+			}
+		}
+		if (!room) continue;
+		// 経過時間から毎回計算し、フレームレートに依存せず終点で止める。
+		room->doorCloseElapsed += (std::max)(deltaTime, 0.0f);
+		const float progress = room->doorCloseDuration > 0.0f
+			? std::clamp(room->doorCloseElapsed / room->doorCloseDuration, 0.0f, 1.0f) : 1.0f;
+		const float eased = QFE::MATH::EaseInOut(0.0f, 1.0f, progress);
+		for (size_t i = 0; i < room->doorIds.size(); ++i) {
+			if (auto* door = entities.GetComponentPtr<QFE::SCENE::TransformComponent>(room->doorIds[i]))
+				door->transform.translate = room->closedDoorPositions[i] + room->doors[i].openOffset * (1.0f - eased);
+		}
+		if (room->spawnFailed) continue;
+		const bool hasEnemy = std::any_of(room->enemyIds.begin(), room->enemyIds.end(),
+			[&](uint32_t id) { return entities.IsActiveEntity(id); });
+		if (!hasEnemy) {
+			room->cleared = true;
+			for (size_t i = 0; i < room->doorIds.size(); ++i) {
+				if (auto* door = entities.GetComponentPtr<QFE::SCENE::TransformComponent>(room->doorIds[i]))
+					door->transform.translate = room->closedDoorPositions[i] + room->doors[i].openOffset;
+			}
+		}
+	}
+	return true;
 }
 
 bool QFE::GAMESYSTEM::InputMovementSystem(
 	QFE::FRAMEWORK::WindowsQuickForgeEngineSystems& systems,
 	QFE::FRAMEWORK::WindowsEngineResources& resources, float deltaTime) {
-	(void)resources;
 
 	QFE::EntityManager& entityManager = QFE::FRAMEWORK::GetSceneEntities(*systems.sceneManager);
 	QFE::INPUT::InputInterface* inputInterface = systems.inputInterface.get();
@@ -97,7 +276,7 @@ bool QFE::GAMESYSTEM::InputMovementSystem(
 
 	entityManager.Each<QFE::COMPONENTS::InputMovementComponent>(
 		[&](uint32_t entityId, QFE::COMPONENTS::InputMovementComponent& movement) {
-			if (!movement.enabled || movement.amount == 0.0f ||
+			if (!movement.enabled ||
 				(entityManager.HasComponent<QFE::STG::ShootingPlayerComponent>(entityId) &&
 					!entityManager.GetComponent<QFE::STG::ShootingPlayerComponent>(entityId).inputEnabled)) {
 				return;
@@ -105,29 +284,75 @@ bool QFE::GAMESYSTEM::InputMovementSystem(
 
 			float horizontalInput = 0.0f;
 			float verticalInput = 0.0f;
-			if (!movement.rightActionName.empty() && QFE::FRAMEWORK::GetKeyPress(inputInterface, movement.rightActionName)) {
+			const auto allowed = [&](const std::string& action) {
+				const bool configured = action.empty() || std::any_of(resources.inputActions.begin(), resources.inputActions.end(),
+					[&](const auto& item) { return item.name == action; });
+				return configured && QFE::FRAMEWORK::IsGameActionEnabled(*systems.sceneManager, action);
+			};
+			const auto pressed = [&](const std::string& action) { return allowed(action) && QFE::FRAMEWORK::GetActionPress(inputInterface, resources.inputActions, action); };
+			if (pressed(movement.rightActionName)) {
 				horizontalInput += 1.0f;
 			}
-			if (!movement.leftActionName.empty() && QFE::FRAMEWORK::GetKeyPress(inputInterface, movement.leftActionName)) {
+			if (pressed(movement.leftActionName)) {
 				horizontalInput -= 1.0f;
 			}
-			if (!movement.forwardActionName.empty() && QFE::FRAMEWORK::GetKeyPress(inputInterface, movement.forwardActionName)) {
+			if (pressed(movement.forwardActionName)) {
 				verticalInput += 1.0f;
 			}
-			if (!movement.backwardActionName.empty() && QFE::FRAMEWORK::GetKeyPress(inputInterface, movement.backwardActionName)) {
+			if (pressed(movement.backwardActionName)) {
 				verticalInput -= 1.0f;
 			}
 			if (movement.useGamePadLeftStick) {
 				const QFE::MATH::Vector2 stickInput = QFE::FRAMEWORK::GetGamePadLeftStickDir(inputInterface);
-				horizontalInput += stickInput.x;
-				verticalInput += stickInput.y;
+				// スティックも対応する方向アクションの禁止を守る。
+				if (stickInput.x > 0.0f && allowed(movement.rightActionName)) horizontalInput += stickInput.x;
+				if (stickInput.x < 0.0f && allowed(movement.leftActionName)) horizontalInput += stickInput.x;
+				if (stickInput.y > 0.0f && allowed(movement.forwardActionName)) verticalInput += stickInput.y;
+				if (stickInput.y < 0.0f && allowed(movement.backwardActionName)) verticalInput += stickInput.y;
 			}
 
 			horizontalInput = std::clamp(horizontalInput, -1.0f, 1.0f);
 			verticalInput = std::clamp(verticalInput, -1.0f, 1.0f);
 			QFE::MATH::Vector3 direction =
 				movement.horizontalAxis * horizontalInput + movement.verticalAxis * verticalInput;
-			if (direction.LengthSq() == 0.0f) {
+
+			if (!movement.alignRotationToMovement) {
+				movement.rotatingToTarget = false;
+			} else if (auto* transform = entityManager.GetComponentPtr<QFE::SCENE::TransformComponent>(entityId)) {
+				if (direction.LengthSq() > 0.0f) {
+					// 移動軸と位置は同じ親ローカル座標なので、前方をその入力方向に合わせる。
+					movement.activeTargetRotation = QFE::MATH::Vector3::LookAt(QFE::MATH::Vector3::Zero(), direction);
+					movement.rotatingToTarget = true;
+				}
+				if (movement.rotatingToTarget) {
+					// 各軸を最短方向に進め、フレーム時間に応じて速度を一定にする。
+					const auto advance = [&](float& current, float target) {
+						constexpr float fullTurn = 6.28318530717958647692f;
+						const float difference = std::remainder(target - current, fullTurn);
+						const float step = movement.rotationSpeed * deltaTime;
+						if (movement.rotationSpeed <= 0.0f || std::abs(difference) <= step) {
+							current = target;
+							return true;
+						}
+						current += std::copysign(step, difference);
+						return false;
+					};
+					auto& rotation = transform->transform.rotate;
+					const bool xDone = advance(rotation.x, movement.activeTargetRotation.x);
+					const bool yDone = advance(rotation.y, movement.activeTargetRotation.y);
+					const bool zDone = advance(rotation.z, movement.activeTargetRotation.z);
+					movement.rotatingToTarget = !(xDone && yDone && zDone);
+				}
+			}
+
+			if (movement.amount == 0.0f || direction.LengthSq() == 0.0f) {
+				const auto* physics = entityManager.GetComponentPtr<QFE::COMPONENTS::PhysicsComponent>(entityId);
+				if (!physics || physics->mass <= 0.0f) {
+					if (auto* transform = entityManager.GetComponentPtr<QFE::SCENE::TransformComponent>(entityId)) {
+						// 入力を離した後も回転が続くため、位置を動かさないフレームでも重なりを解消する。
+						transform->transform.translate += MoveInputCollider(entityManager, entityId, QFE::MATH::Vector3::Zero());
+					}
+				}
 				return;
 			}
 			if (movement.normalizeInput && direction.LengthSq() > 1.0f) {
@@ -145,7 +370,7 @@ bool QFE::GAMESYSTEM::InputMovementSystem(
 			if (entityManager.HasComponent<QFE::SCENE::TransformComponent>(entityId)) {
 				const auto displacement = direction * movement.amount * deltaTime;
 				entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform.translate +=
-					MoveInputSphere(entityManager, entityId, displacement);
+					MoveInputCollider(entityManager, entityId, displacement);
 			}
 		});
 
@@ -177,7 +402,7 @@ bool QFE::GAMESYSTEM::PhysicsComponentSystem(
 			// 力による入力移動も同じ壁判定を通し、壁に向かう速度を残さない。
 			entityManager.GetComponent<QFE::SCENE::TransformComponent>(entityId).transform.translate +=
 				entityManager.HasComponent<QFE::COMPONENTS::InputMovementComponent>(entityId)
-					? MoveInputSphere(entityManager, entityId, displacement, &physics.velocity) : displacement;
+					? MoveInputCollider(entityManager, entityId, displacement, &physics.velocity) : displacement;
 			physics.acceleration = QFE::MATH::Vector3::Zero();
 		});
 
@@ -207,12 +432,19 @@ bool QFE::GAMESYSTEM::AutoScrollSystem(
 bool QFE::GAMESYSTEM::ShootingPlayerSystem(
 	QFE::FRAMEWORK::WindowsQuickForgeEngineSystems& systems,
 	QFE::FRAMEWORK::WindowsEngineResources& resources, float deltaTime) {
-	(void)resources;
 
 	// マネージャの取得
 	QFE::SCENE::SceneManager* sceneManager = systems.sceneManager.get();
 	QFE::EntityManager& entityManager = QFE::FRAMEWORK::GetSceneEntities(*sceneManager);
 	QFE::INPUT::InputInterface* inputInterface = systems.inputInterface.get();
+	const auto pressed = [&](const std::string& action) {
+		return QFE::FRAMEWORK::IsGameActionEnabled(*sceneManager, action) &&
+			QFE::FRAMEWORK::GetActionPress(inputInterface, resources.inputActions, action);
+	};
+	const auto triggered = [&](const std::string& action) {
+		return QFE::FRAMEWORK::IsGameActionEnabled(*sceneManager, action) &&
+			QFE::FRAMEWORK::GetActionTrigger(inputInterface, resources.inputActions, action);
+	};
 
 	// シューティングプレイヤーの実行
 	entityManager.Each<QFE::STG::ShootingPlayerComponent>([&](uint32_t entityId, QFE::STG::ShootingPlayerComponent& shootingPlayerComp) {
@@ -226,34 +458,34 @@ bool QFE::GAMESYSTEM::ShootingPlayerSystem(
 			float targetRotateZ = 0.0f;
 			float rotatePower = 1.0f;
 
-			if (QFE::FRAMEWORK::GetKeyPress(inputInterface, "Slow")) {
+			if (pressed("Slow")) {
 				speed *= 0.5f;
 				rotatePower *= 0.5f;
 			}
 
 			// プレイヤーの移動処理
-			if (QFE::FRAMEWORK::GetKeyPress(inputInterface, "Up")) {
+			if (pressed("Up")) {
 				shootingPlayerComp.velocity.z = speed * deltaTime;
 			}
-			if (QFE::FRAMEWORK::GetKeyPress(inputInterface, "Down")) {
+			if (pressed("Down")) {
 				shootingPlayerComp.velocity.z = -speed * deltaTime;
 			}
-			if (QFE::FRAMEWORK::GetKeyPress(inputInterface, "Left")) {
+			if (pressed("Left")) {
 
 				targetRotateZ = 0.7f;
 				shootingPlayerComp.velocity.x = -speed * deltaTime;
 			}
-			if (QFE::FRAMEWORK::GetKeyPress(inputInterface, "Right")) {
+			if (pressed("Right")) {
 				targetRotateZ = -0.7f;
 				shootingPlayerComp.velocity.x = speed * deltaTime;
 			}
 
-			if (QFE::FRAMEWORK::GetKeyTrigger(inputInterface, "Left")) {
+			if (triggered("Left")) {
 				if (playerTransform.rotate.z < -0.6f) {
 					playerTransform.rotate.z = -3.0f;
 				}
 			}
-			if (QFE::FRAMEWORK::GetKeyTrigger(inputInterface, "Right")) {
+			if (triggered("Right")) {
 				if (playerTransform.rotate.z > 0.6f) {
 					playerTransform.rotate.z = 3.0f;
 				}
@@ -449,6 +681,8 @@ bool QFE::GAMESYSTEM::CollisionSystem(
 				if (auto* spawnedTransform = entityManager.GetComponentPtr<QFE::SCENE::TransformComponent>(spawned))
 					spawnedTransform->transform.translate = position;
 			}
+		}, [&](const QFE::FRAMEWORK::CollisionTriggerCommand& command) {
+			ApplyGameCollisionAction(entityManager, command);
 		});
 	return true;
 }
@@ -685,7 +919,7 @@ bool QFE::GAMESYSTEM::BulletEmitterTriggerSystem(
 			}
 
 			for (QFE::STG::InputBulletEmitterTriggerSetting& trigger : triggerComp.triggers) {
-				if (!trigger.enabled) {
+				if (!trigger.enabled || !QFE::FRAMEWORK::IsGameActionEnabled(*systems.sceneManager, trigger.inputActionName)) {
 					trigger.repeatTimer = 0.0f;
 					continue;
 				}
@@ -695,17 +929,18 @@ bool QFE::GAMESYSTEM::BulletEmitterTriggerSystem(
 					if (!trigger.inputActionName.empty()) {
 						switch (triggerMode) {
 						case QFE::STG::BulletEmitterInputTrigger:
-							active |= QFE::FRAMEWORK::GetKeyTrigger(inputInterface, trigger.inputActionName);
+							active |= QFE::FRAMEWORK::GetActionTrigger(inputInterface, resources.inputActions, trigger.inputActionName);
 							break;
 						case QFE::STG::BulletEmitterInputRelease:
-							active |= QFE::FRAMEWORK::GetKeyRelease(inputInterface, trigger.inputActionName);
+							active |= QFE::FRAMEWORK::GetActionRelease(inputInterface, resources.inputActions, trigger.inputActionName);
 							break;
 						default:
-							active |= QFE::FRAMEWORK::GetKeyPress(inputInterface, trigger.inputActionName);
+							active |= QFE::FRAMEWORK::GetActionPress(inputInterface, resources.inputActions, trigger.inputActionName);
 							break;
 						}
 					}
-					if (trigger.mouseButton >= 0 && trigger.mouseButton <= INT8_MAX) {
+					// DirectInput のマウス状態は 4 ボタンまでなので、範囲外を読まない。
+					if (trigger.mouseButton >= 0 && trigger.mouseButton <= 3) {
 						const int8_t mouseButton = static_cast<int8_t>(trigger.mouseButton);
 						switch (triggerMode) {
 						case QFE::STG::BulletEmitterInputTrigger:

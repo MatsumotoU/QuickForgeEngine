@@ -17,6 +17,8 @@ namespace QFE::GAME {
 			registry.RegisterComponent<STG::PlayerTrackingComponent>("PlayerTrackingComponent", "Gameplay") &&
 			registry.RegisterComponent<STG::AutoScrollComponent>("AutoScrollComponent", "Gameplay") &&
 			registry.RegisterComponent<STG::EnemyAIComponent>("EnemyAIComponent", "Gameplay") &&
+			registry.RegisterComponent<STG::StatusComponent>("StatusComponent", "Gameplay") &&
+			registry.RegisterComponent<STG::EncounterRoomComponent>("EncounterRoomComponent", "Gameplay") &&
 			registry.RegisterComponent<STG::EntitySpawnerComponent>("EntitySpawnerComponent", "Gameplay") &&
 			registry.RegisterComponent<STG::SpawnTriggerComponent>("SpawnTriggerComponent", "Gameplay");
 	}

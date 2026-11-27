@@ -4,9 +4,19 @@
 #include "components/TransformHierarchy.h"
 
 #include <limits>
+#include <algorithm>
+#include <cmath>
 
 namespace {
 	using Json = nlohmann::json;
+
+	bool SetUnsignedValue(Json& target, double value) {
+		if (!std::isfinite(value)) return false;
+		// unsigned の HP などを減らしたとき、0 未満で大きな値に巻き戻らないようにする。
+		const double maximum = static_cast<double>((std::numeric_limits<uint32_t>::max)());
+		target = static_cast<uint32_t>(std::clamp(value, 0.0, maximum));
+		return true;
+	}
 
 	Json* FindProperty(Json& root, const std::string& path) {
 		Json* current = &root;
@@ -31,9 +41,11 @@ namespace {
 		const double rhs = operand.get<double>();
 		switch (operation) {
 		case QFE::FRAMEWORK::ParameterOperation::Add:
+			if (target.is_number_unsigned()) return SetUnsignedValue(target, lhs + rhs);
 			target = lhs + rhs;
 			return true;
 		case QFE::FRAMEWORK::ParameterOperation::Multiply:
+			if (target.is_number_unsigned()) return SetUnsignedValue(target, lhs * rhs);
 			target = lhs * rhs;
 			return true;
 		case QFE::FRAMEWORK::ParameterOperation::SetBits:
@@ -53,6 +65,8 @@ namespace {
 	bool ApplyOperation(Json& target, const Json& operand,
 		QFE::FRAMEWORK::ParameterOperation operation) {
 		if (operation == QFE::FRAMEWORK::ParameterOperation::Set) {
+			if (target.is_number_unsigned())
+				return operand.is_number() && SetUnsignedValue(target, operand.get<double>());
 			target = operand;
 			return true;
 		}

@@ -4,7 +4,10 @@
 #include "components/CollisionTriggerComponent.h"
 #include "components/TransformHierarchy.h"
 #include "components/SceneSpawnComponent.h"
+#include "components/ObjectInfoComponent.h"
 #include "framework/scene/EventSystem.h"
+
+#include <algorithm>
 
 namespace {
 	using Json = nlohmann::json;
@@ -47,6 +50,16 @@ void QFE::FRAMEWORK::NotifyCollisionTrigger(
 	auto* trigger = entityManager.GetComponentPtr<SCENE::CollisionTriggerComponent>(colliderEntityId);
 	if (trigger == nullptr ||
 		(trigger->acceptedMask != 0 && (trigger->acceptedMask & otherCollisionMask) == 0)) return;
+	if (!trigger->acceptedTags.empty()) {
+		const auto* info = entityManager.GetComponentPtr<SCENE::ObjectInfoComponent>(otherEntityId);
+		// ObjectInfo のない従来のエンティティも初期タグとして扱う。
+		const bool matches = std::any_of(trigger->acceptedTags.begin(), trigger->acceptedTags.end(),
+			[&](const std::string& tag) {
+				return info ? std::find(info->tags.begin(), info->tags.end(), tag) != info->tags.end()
+					: tag == "Default";
+			});
+		if (!matches) return;
+	}
 
 	trigger->currentContacts[otherEntityId] = otherCollisionMask;
 	const bool entered = !trigger->previousContacts.contains(otherEntityId);
@@ -71,7 +84,8 @@ void QFE::FRAMEWORK::EndCollisionTriggerFrame(
 
 void QFE::FRAMEWORK::ApplyCollisionTriggerCommands(EntityManager& entityManager,
 	const std::vector<CollisionTriggerCommand>& commands,
-	const std::function<void(const std::string&, uint32_t)>& spawn) {
+	const std::function<void(const std::string&, uint32_t)>& spawn,
+	const std::function<void(const CollisionTriggerCommand&)>& gameAction) {
 	for (const auto& command : commands) {
 		const auto& action = command.action;
 		const std::string type = action.value("type", std::string("Parameter"));
@@ -105,6 +119,9 @@ void QFE::FRAMEWORK::ApplyCollisionTriggerCommands(EntityManager& entityManager,
 			if (index < 0) continue;
 			if (type == "PlayTrack") PlayEventTrack(entityManager, target, static_cast<size_t>(index));
 			else ToggleEventTrack(entityManager, target, static_cast<size_t>(index));
+		} else if (type != "PlayTrack" && type != "ToggleTrack" && gameAction) {
+			// 共通処理が知らないアクションだけをゲーム側に委ね、登録順を保つ。
+			gameAction(command);
 		}
 	}
 }

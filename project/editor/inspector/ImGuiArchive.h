@@ -11,14 +11,18 @@ namespace QFE {
 	class EntityManager;
 }
 namespace QFE::ASSET { class ModelLoader; }
+namespace QFE::FRAMEWORK { struct GameInputAction; }
 
 namespace QFE::EDITOR {
+	class ComponentInspectorRegistry;
 	/// @brief Archive のリフレクション情報から ImGui の編集UIを生成する。
 	class ImGuiArchive final : public Archive {
 	public:
 		using Archive::Process;
 
-		ImGuiArchive(EntityManager* entityManager, uint32_t entityId, ASSET::ModelLoader* modelLoader);
+		ImGuiArchive(EntityManager* entityManager, uint32_t entityId, ASSET::ModelLoader* modelLoader,
+			const std::vector<std::string>* gameTags, const ComponentInspectorRegistry* componentInspectorRegistry,
+			const std::vector<QFE::FRAMEWORK::GameInputAction>* gameInputActions);
 		/// @brief 編集中のコンポーネント名を設定する。
 		void SetComponentType(const std::string& name) { componentType_ = name; }
 
@@ -60,6 +64,9 @@ namespace QFE::EDITOR {
 		EntityManager* entityManager_;
 		uint32_t entityId_;
 		ASSET::ModelLoader* modelLoader_;
+		const std::vector<std::string>* gameTags_;
+		const ComponentInspectorRegistry* componentInspectorRegistry_;
+		const std::vector<QFE::FRAMEWORK::GameInputAction>* gameInputActions_;
 		std::string componentType_;
 	};
 }

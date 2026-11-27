@@ -12,6 +12,7 @@
 #include "framework/window/WindowCoreFrameWork.h"
 #include "framework/graphic/GraphicEngineCoreFramework.h"
 #include "framework/gui/GuiCoreFramework.h"
+#include "framework/assets/AssetsCoreFramework.h"
 #include "input/interface/InputInterface.h"
 #include "scene/SceneManager.h"
 #include "components/EngineComponentRegistration.h"
@@ -592,11 +593,13 @@ bool QFE::FRAMEWORK::ReloadWindowsGameModule(
 }
 
 bool QFE::FRAMEWORK::BeginWindowsEngineFrame(WindowsQuickForgeEngineSystems& systems) {
-	if (!systems.fpsCounter || !systems.inputInterface) {
+	if (!systems.fpsCounter || !systems.inputInterface || !systems.guiManager) {
 		return false;
 	}
 	systems.fpsCounter->FrameStart();
 	systems.inputInterface->Update();
+	// エディター更新でも同じフレームの ImGui 入力を参照できるようにする。
+	QFE::FRAMEWORK::PreDrawGui(*systems.guiManager);
 	return true;
 }
 
@@ -665,6 +668,10 @@ void QFE::FRAMEWORK::ShutdownWindowsQuickForgeEngineSystems(WindowsQuickForgeEng
 
 void QFE::FRAMEWORK::EngineInitialize(WindowsQuickForgeEngineSystems& systems, WindowsEngineResources& resources) {
 	auto& graphicEngine = systems.graphicEngine;
+	// ゲームごとの設定がない旧プロジェクトには従来のキー割り当てを使う。
+	const auto projectRoot = QFE::FRAMEWORK::ASSETS::GetProjectRoot();
+	if (!projectRoot.empty() && !QFE::FRAMEWORK::LoadGameInputActions(projectRoot / "project.json", resources.inputActions))
+		QFE_LOG("Failed to load game input actions; using defaults.", QFE::LogLevel::Warning);
 
 	std::string psDirName = resources.psDirName;
 	std::string vsDirName = resources.vsDirName;
@@ -761,14 +768,15 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 	QFE::SCENE::SceneManager& sceneManager = *systems.sceneManager;
 	QFE::EntityManager& entityManager = sceneManager.GetCurrentSceneEntityManager();
 	auto* accelerationStructure = d3d12GraphicEngine->GetRaytracingAccelerationStructure();
+	resources.debugLines.clear();
 
 	if (resources.showSplinePaths && sceneManager.IsSceneVisible(QFE::SCENE::MainSceneId)) QFE::FRAMEWORK::DrawSplineMovementPaths(
 		entityManager,
-		[d3d12GraphicEngine](
+		[&resources](
 			const QFE::MATH::Vector3& start,
 			const QFE::MATH::Vector3& end,
 			const QFE::MATH::Vector4& color) {
-			d3d12GraphicEngine->DrawLine(start, end, color);
+			resources.debugLines.push_back({ start, end, color });
 		});
 
 #if defined(QFE_MODE_DEBUG) || defined(QFE_MODE_DEVELOPMENT)
@@ -781,16 +789,16 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 				const auto world = QFE::SCENE::GetWorldMatrix(entityManager, id);
 				boxTransform.translate = { world.m[3][0], world.m[3][1], world.m[3][2] };
 				QFE::FRAMEWORK::ColliderDebugDraw::Box(boxTransform, room.halfExtents, false,
-					[d3d12GraphicEngine](const QFE::MATH::Vector3& start, const QFE::MATH::Vector3& end) {
-						d3d12GraphicEngine->DrawLine(start, end, { 1.0f, 0.75f, 0.1f, 1.0f });
+					[&resources](const QFE::MATH::Vector3& start, const QFE::MATH::Vector3& end) {
+						resources.debugLines.push_back({ start, end, { 1.0f, 0.75f, 0.1f, 1.0f } });
 					});
 			});
 	}
 	if (resources.showColliders && sceneManager.IsSceneVisible(QFE::SCENE::MainSceneId)) {
 	// Use the same local Transform and unscaled dimensions as CollisionSystem.
-	const auto drawColliderLine = [d3d12GraphicEngine](const QFE::MATH::Vector3& start,
+	const auto drawColliderLine = [&resources](const QFE::MATH::Vector3& start,
 		const QFE::MATH::Vector3& end) {
-		d3d12GraphicEngine->DrawLine(start, end, { 0.2f, 1.0f, 0.3f, 1.0f });
+		resources.debugLines.push_back({ start, end, { 0.2f, 1.0f, 0.3f, 1.0f } });
 	};
 	entityManager.Each<QFE::SCENE::SphereColliderComponent, QFE::SCENE::TransformComponent>(
 		[&](uint32_t, const QFE::SCENE::SphereColliderComponent& collider,
@@ -1213,7 +1221,6 @@ void QFE::FRAMEWORK::EnginePreDraw(WindowsQuickForgeEngineSystems& systems, Wind
 	}
 
 	QFE::FRAMEWORK::PreDrawGraphicEngine(graphicEngine.get());
-	QFE::FRAMEWORK::PreDrawGui(*guiManager);
 }
 
 void QFE::FRAMEWORK::EnginePostDraw(WindowsQuickForgeEngineSystems& systems, WindowsEngineResources& resources) {
@@ -1307,11 +1314,6 @@ void QFE::FRAMEWORK::EnginePostDraw(WindowsQuickForgeEngineSystems& systems, Win
 	}
 	sceneManager.SetCurrentScene(QFE::SCENE::MainSceneId);
 
-	// 線はレイトレーシングの影計算には含めず、3D深度テスト付きで結果に重ねる。
-	d3d12GraphicEngine->RenderLines(
-		resources.viewProj, resources.viewportHandle, resources.scissorRectHandle,
-		resources.finalRenderTargetHandle);
-
 	const QFE::GRAPHIC::PSOHandle spritePsoHandle =
 		resources.finalRenderTargetHandle == QFE::GRAPHIC::RenderTargetHandle::SwapChain
 		? resources.spriteSrgbPsoHandle
@@ -1325,6 +1327,12 @@ void QFE::FRAMEWORK::EnginePostDraw(WindowsQuickForgeEngineSystems& systems, Win
 			resources.spriteVertexBufferHandle, resources.finalRenderTargetHandle);
 	}
 	sceneManager.SetCurrentScene(QFE::SCENE::MainSceneId);
+	if (resources.finalRenderTargetHandle == QFE::GRAPHIC::RenderTargetHandle::SwapChain) {
+		// 実行画面では ImGui の foreground に重ね、エディターでは各ビューがそれぞれ描画する。
+		const auto displaySize = ImGui::GetIO().DisplaySize;
+		QFE::FRAMEWORK::DrawDebugLines(resources.debugLines, resources.viewProj,
+			{ 0.0f, 0.0f }, { displaySize.x, displaySize.y }, true);
+	}
 
 	// 全画面フェードをメニューの上に重ねると別シーンまで暗くなる。
 	// 個別レンダーターゲットがない間は、サブシーン表示中の全画面フェードを省く。

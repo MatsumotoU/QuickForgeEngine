@@ -33,6 +33,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "Gamesystems",
                     "name": "Camera",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "130ffdf4-04ec-4935-bc54-15d93cfd2d66"
                 },
                 "RoomCameraComponent": {
@@ -75,6 +78,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "Gamesystems",
                     "name": "MainDirectionalLight",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "b8ac30d3-3d65-46e7-9aac-435d08f21fd3"
                 },
                 "TransformComponent": {
@@ -101,7 +107,164 @@
         },
         {
             "components": {
+                "MaterialComponent": {
+                    "albedoColor": {
+                        "w": 1.0,
+                        "x": 0.800000011920929,
+                        "y": 0.15000000596046448,
+                        "z": 0.15000000596046448
+                    },
+                    "metallic": 0.0,
+                    "smoothness": 0.0,
+                    "uvTransform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ModelRenderComponent": {
+                    "modelName": "Primitive/Sphere",
+                    "textureName": ""
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "Enemies",
+                    "name": "Enemy",
+                    "tags": [
+                        "Enemy"
+                    ],
+                    "uuid": "813e32aa-d009-4ad3-b5c2-38019c43e635"
+                },
+                "ShaderComponent": {
+                    "castShadow": true,
+                    "receiveShadow": true
+                },
+                "SphereColliderComponent": {
+                    "mask": 0,
+                    "onCollisionEnterScriptFunctionName": "",
+                    "radius": 0.5
+                },
+                "StatusComponent": {
+                    "attackPower": 1,
+                    "health": 3
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": -0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 18.14708709716797,
+                            "y": 0.0,
+                            "z": 3.0
+                        }
+                    }
+                }
+            },
+            "id": 2
+        },
+        {
+            "components": {
+                "AABBColliderComponent": {
+                    "halfExtents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 1.5
+                    },
+                    "mask": 0
+                },
+                "MaterialComponent": {
+                    "albedoColor": {
+                        "w": 1.0,
+                        "x": 0.44999998807907104,
+                        "y": 0.15000000596046448,
+                        "z": 0.6000000238418579
+                    },
+                    "metallic": 0.0,
+                    "smoothness": 0.0,
+                    "uvTransform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 1.0
+                        },
+                        "translate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                },
+                "ModelRenderComponent": {
+                    "modelName": "Primitive/Box",
+                    "textureName": ""
+                },
+                "ObjectInfoComponent": {
+                    "hierarchyGroup": "GameMap",
+                    "name": "EnemyRoomDoor",
+                    "tags": [
+                        "Default"
+                    ],
+                    "uuid": "20ffb712-2728-4eca-b9e0-8ba2db662680"
+                },
+                "ShaderComponent": {
+                    "castShadow": true,
+                    "receiveShadow": true
+                },
+                "TransformComponent": {
+                    "transform": {
+                        "rotate": {
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "scale": {
+                            "x": 1.0,
+                            "y": 1.0,
+                            "z": 3.0
+                        },
+                        "translate": {
+                            "x": 7.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        }
+                    }
+                }
+            },
+            "id": 3
+        },
+        {
+            "components": {
+                "InputControlComponent": {
+                    "inputEnabled": true,
+                    "affectAllActions": true,
+                    "actions": []
+                },
                 "InputMovementComponent": {
+                    "alignRotationToMovement": true,
                     "amount": 7.0,
                     "backwardActionName": "Down",
                     "enabled": true,
@@ -114,6 +277,7 @@
                     "leftActionName": "Left",
                     "normalizeInput": true,
                     "rightActionName": "Right",
+                    "rotationSpeed": 8.0,
                     "useGamePadLeftStick": true,
                     "verticalAxis": {
                         "x": 0.0,
@@ -152,9 +316,20 @@
                     "modelName": "Primitive/Box",
                     "textureName": ""
                 },
+                "OBBColliderComponent": {
+                    "halfExtents": {
+                        "x": 0.5,
+                        "y": 0.5,
+                        "z": 0.5
+                    },
+                    "mask": 0
+                },
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "",
                     "name": "Player",
+                    "tags": [
+                        "Player"
+                    ],
                     "uuid": "4774e2ca-1417-4d87-acf8-62acc7ea65b7"
                 },
                 "PhysicsComponent": {
@@ -175,10 +350,9 @@
                     "castShadow": true,
                     "receiveShadow": true
                 },
-                "SphereColliderComponent": {
-                    "mask": 0,
-                    "onCollisionEnterScriptFunctionName": "",
-                    "radius": 0.5
+                "StatusComponent": {
+                    "attackPower": 1,
+                    "health": 3
                 },
                 "TransformComponent": {
                     "transform": {
@@ -207,6 +381,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "WorldDecoration",
                     "name": "Sky Box",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "4e4d2730-c0f0-4aa0-aaba-54a742e8e83a"
                 },
                 "SkyBoxComponent": {
@@ -271,6 +448,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "WorldDecoration",
                     "name": "Ground",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "2e437370-a507-45c9-9f87-2a9083573591"
                 },
                 "ShaderComponent": {
@@ -343,6 +523,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "d4e24af4-86de-4573-90e6-f98708f056dd"
                 },
                 "ShaderComponent": {
@@ -415,6 +598,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "17e2216e-2828-4766-abac-731eb820a2b2"
                 },
                 "ShaderComponent": {
@@ -487,6 +673,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "5045df95-863f-4fa8-853f-53eb9e099d27"
                 },
                 "ShaderComponent": {
@@ -559,6 +748,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "1c7fddc8-8ea5-460e-b035-bca595db927c"
                 },
                 "ShaderComponent": {
@@ -631,6 +823,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "b4c3389e-dfb3-45f8-ae51-87260557c498"
                 },
                 "ShaderComponent": {
@@ -703,6 +898,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "d9137b34-e410-4caa-8f96-074541a0c648"
                 },
                 "ShaderComponent": {
@@ -775,6 +973,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "05f2fe20-c436-4642-a654-2a276eb1edfd"
                 },
                 "ShaderComponent": {
@@ -847,6 +1048,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "e7fc290a-6c3b-48ad-97d5-f18340f67170"
                 },
                 "ShaderComponent": {
@@ -919,6 +1123,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "a17aef86-cbaa-4683-aade-1934bd298652"
                 },
                 "ShaderComponent": {
@@ -991,6 +1198,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "a63a0e93-300f-4e1e-9088-b3adeed5b83b"
                 },
                 "ShaderComponent": {
@@ -1063,6 +1273,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "bc688813-a8cc-4c8f-99fa-c5bec1fa3d6d"
                 },
                 "ShaderComponent": {
@@ -1135,6 +1348,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "9999cfb1-861a-463a-be9f-d20fa5745fd2"
                 },
                 "ShaderComponent": {
@@ -1207,6 +1423,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "7e0fb759-8180-4cdb-8d1d-f4788135663a"
                 },
                 "ShaderComponent": {
@@ -1279,6 +1498,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "bc96dac0-9a04-44cd-8136-6962c548954e"
                 },
                 "ShaderComponent": {
@@ -1351,6 +1573,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "5f06a752-2922-4896-bada-9698bcc55ba4"
                 },
                 "ShaderComponent": {
@@ -1423,6 +1648,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "d72beb68-328e-4ec8-be80-9396756c5d15"
                 },
                 "ShaderComponent": {
@@ -1495,6 +1723,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "8e0913ef-397d-462a-b6c8-d20378fde70b"
                 },
                 "ShaderComponent": {
@@ -1567,6 +1798,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "cd8d3206-2bbc-442f-b737-f0a344807cf6"
                 },
                 "ShaderComponent": {
@@ -1639,6 +1873,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "ce6d8c62-0b63-40d9-bf39-db42271498bb"
                 },
                 "ShaderComponent": {
@@ -1711,6 +1948,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "5991f0d6-91e6-4d94-9742-278749c4c495"
                 },
                 "ShaderComponent": {
@@ -1783,6 +2023,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "f4d2fcbe-12dc-4aef-a401-316802f5443a"
                 },
                 "ShaderComponent": {
@@ -1855,6 +2098,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "afe5f3e9-652c-4b95-828a-249d0cb1f932"
                 },
                 "ShaderComponent": {
@@ -1927,6 +2173,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "e4421fe6-8013-4780-bbb2-c5acff05a60a"
                 },
                 "ShaderComponent": {
@@ -1999,6 +2248,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "dbefcc46-8999-4b56-8735-9e048547533b"
                 },
                 "ShaderComponent": {
@@ -2071,6 +2323,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "0c7590f2-612f-44f9-af29-d3731bc1762b"
                 },
                 "ShaderComponent": {
@@ -2143,6 +2398,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "6f90f36c-81e5-4a7c-9d64-e0c21e9903bb"
                 },
                 "ShaderComponent": {
@@ -2215,6 +2473,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "efcb2daa-34b0-45e7-80ad-093d2384a8ec"
                 },
                 "ShaderComponent": {
@@ -2287,6 +2548,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "98386af6-23f1-4718-9404-3722d0763f05"
                 },
                 "ShaderComponent": {
@@ -2359,6 +2623,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "f8e88ffd-3f38-4d8a-9a5e-f8f06833cce0"
                 },
                 "ShaderComponent": {
@@ -2431,6 +2698,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "600012cb-411e-4eb2-930e-83108a9969c0"
                 },
                 "ShaderComponent": {
@@ -2503,6 +2773,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "d7db4c31-bd7a-471e-8850-31592af7a7ea"
                 },
                 "ShaderComponent": {
@@ -2575,6 +2848,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "810f1757-3383-480b-9d1a-ad0934cc241c"
                 },
                 "ShaderComponent": {
@@ -2647,6 +2923,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "fb7e4ab6-151b-44a2-8dfd-84b7bccdf51d"
                 },
                 "ShaderComponent": {
@@ -2719,6 +2998,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "583245da-0a2d-4a73-b2d4-4e94f92e75b6"
                 },
                 "ShaderComponent": {
@@ -2791,6 +3073,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "64f0c445-5f5b-4e84-a491-e03d3518c4ff"
                 },
                 "ShaderComponent": {
@@ -2863,6 +3148,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "3f0b5517-bdfd-495c-a860-c3cbad5c3771"
                 },
                 "ShaderComponent": {
@@ -2935,6 +3223,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "4a299db8-eb87-4782-a212-d16786352f2b"
                 },
                 "ShaderComponent": {
@@ -3007,6 +3298,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "ffbb2869-0dca-4bde-bf05-bb5d9fb9a660"
                 },
                 "ShaderComponent": {
@@ -3079,6 +3373,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "a9c8c94e-d280-41f5-bf11-e3eaca794878"
                 },
                 "ShaderComponent": {
@@ -3151,6 +3448,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "349e6049-fab4-484f-b60a-9bb74e880f20"
                 },
                 "ShaderComponent": {
@@ -3223,6 +3523,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "c2478750-daeb-42de-95b5-144f136ac47e"
                 },
                 "ShaderComponent": {
@@ -3295,6 +3598,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "39611455-4124-4214-ba98-3d4f1369fe7c"
                 },
                 "ShaderComponent": {
@@ -3367,6 +3673,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "add5223f-cdd3-48b4-ab10-ec737ce89a77"
                 },
                 "ShaderComponent": {
@@ -3439,6 +3748,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "1a394b3e-2ca4-4eaf-951d-59ed9bc14171"
                 },
                 "ShaderComponent": {
@@ -3511,6 +3823,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "5e6e52c2-a07b-45fb-b05c-f53a029b7008"
                 },
                 "ShaderComponent": {
@@ -3583,6 +3898,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "efa7f660-4a3a-417b-9368-55472411e9fd"
                 },
                 "ShaderComponent": {
@@ -3655,6 +3973,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "47e0605f-7a73-41ee-913a-5af46607a9ca"
                 },
                 "ShaderComponent": {
@@ -3727,6 +4048,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "369cc1b0-6ed7-42b5-890d-dbb83a6e2742"
                 },
                 "ShaderComponent": {
@@ -3799,6 +4123,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "938bb0af-ccae-4dbb-b4e5-63f417b4236d"
                 },
                 "ShaderComponent": {
@@ -3871,6 +4198,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "f78f7bc2-5d92-47d2-a605-ed587e279b2f"
                 },
                 "ShaderComponent": {
@@ -3943,6 +4273,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "1a7d91aa-ff1a-4db1-928f-841d03c78869"
                 },
                 "ShaderComponent": {
@@ -4015,6 +4348,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "5f3eb57f-17ce-4843-bf24-5881092686a2"
                 },
                 "ShaderComponent": {
@@ -4087,6 +4423,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "41ba0bbf-d704-4f7d-8153-9b034f15c723"
                 },
                 "ShaderComponent": {
@@ -4159,6 +4498,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "7694d86f-9fc5-4c59-bea7-22ca76bc90c8"
                 },
                 "ShaderComponent": {
@@ -4231,6 +4573,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "febc3d76-4aa8-44e8-954b-3b75022d0866"
                 },
                 "ShaderComponent": {
@@ -4303,6 +4648,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "1ddab84e-bddd-44d1-8de6-e59b72d91e10"
                 },
                 "ShaderComponent": {
@@ -4375,6 +4723,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "a96f5119-4ccb-47b3-8f24-420e79dc7afc"
                 },
                 "ShaderComponent": {
@@ -4447,6 +4798,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "f7287843-c4b8-4cb6-99d9-7fd8e9d5916d"
                 },
                 "ShaderComponent": {
@@ -4519,6 +4873,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "07397ffd-6917-4c51-b5a9-41c74ee50d61"
                 },
                 "ShaderComponent": {
@@ -4591,6 +4948,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "e5053710-99df-4af5-b1cd-a942bf55e701"
                 },
                 "ShaderComponent": {
@@ -4663,6 +5023,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "a6072cf1-0d47-41ec-8c3e-f7e7c15faa43"
                 },
                 "ShaderComponent": {
@@ -4735,6 +5098,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "9c016114-c1d0-4ac4-b7f3-33c30ed372b1"
                 },
                 "ShaderComponent": {
@@ -4807,6 +5173,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "57c5bdb6-49a5-4db2-9260-82a450040703"
                 },
                 "ShaderComponent": {
@@ -4879,6 +5248,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "0a01fb4d-b3ff-420b-aa49-a9b3f019771b"
                 },
                 "ShaderComponent": {
@@ -4951,6 +5323,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "1fb775ef-0d2a-4373-b7e2-4a39636cf34d"
                 },
                 "ShaderComponent": {
@@ -5023,6 +5398,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "89dd463d-f00d-4588-8a7e-e114e01c947f"
                 },
                 "ShaderComponent": {
@@ -5095,6 +5473,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "ffff7aae-4f5d-40c6-8e82-7c9ff8815428"
                 },
                 "ShaderComponent": {
@@ -5167,6 +5548,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "5c034c23-5848-4f4e-8889-1f6a7c4b3098"
                 },
                 "ShaderComponent": {
@@ -5239,6 +5623,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "8fe53b7f-cee7-4bc4-b3b5-e14e3f9109fc"
                 },
                 "ShaderComponent": {
@@ -5311,6 +5698,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "7ede9924-b3af-461b-97a2-62c8dabc4ea4"
                 },
                 "ShaderComponent": {
@@ -5383,6 +5773,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "2586108e-2c8c-4d5a-b7b6-617c6f00ebe0"
                 },
                 "ShaderComponent": {
@@ -5455,6 +5848,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "45bb43e2-cb6d-47ae-9217-06a058fe22d7"
                 },
                 "ShaderComponent": {
@@ -5527,6 +5923,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "f40468d3-93e8-4efb-8bf9-d9c87d8ddaf7"
                 },
                 "ShaderComponent": {
@@ -5599,6 +5998,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "093db5a5-6c24-4353-b90f-3f32e64c46d8"
                 },
                 "ShaderComponent": {
@@ -5671,6 +6073,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "e76773ce-9ac4-4cdc-b99f-21e373b4c3ce"
                 },
                 "ShaderComponent": {
@@ -5743,6 +6148,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "94226dee-16bf-43c9-862c-450fd4c329ab"
                 },
                 "ShaderComponent": {
@@ -5815,6 +6223,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "10780a72-4c2e-45d0-ac46-9058f6467b6a"
                 },
                 "ShaderComponent": {
@@ -5887,6 +6298,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "4588f63c-705b-43a4-b712-e37b8df55b7b"
                 },
                 "ShaderComponent": {
@@ -5959,6 +6373,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "3d15e655-ac61-40ca-b9d1-635601b1725d"
                 },
                 "ShaderComponent": {
@@ -6031,6 +6448,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "7440e5ee-6d2f-4e2c-b54e-887d4a7c8483"
                 },
                 "ShaderComponent": {
@@ -6103,6 +6523,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "967b5864-b437-4796-918c-6d2f268a9031"
                 },
                 "ShaderComponent": {
@@ -6175,6 +6598,9 @@
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "GameMap",
                     "name": "StaticWall",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "e66d1b81-94e9-463d-900f-1ac0311d6cfd"
                 },
                 "ShaderComponent": {
@@ -6219,7 +6645,10 @@
                 },
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "CameraRooms",
-                    "name": "CameraRoomSystem",
+                    "name": "StartRoom",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "e49caf84-766e-4750-8d42-2f2f257fd6ac"
                 },
                 "TransformComponent": {
@@ -6258,16 +6687,45 @@
                         "z": 7.300000190734863
                     }
                 },
+                "EncounterRoomComponent": {
+                    "doorCloseDuration": 0.5,
+                    "doors": [
+                        {
+                            "entity": "20ffb712-2728-4eca-b9e0-8ba2db662680",
+                            "openOffset": {
+                                "x": 0.0,
+                                "y": 4.0,
+                                "z": 0.0
+                            }
+                        }
+                    ],
+                    "enabled": true,
+                    "enemies": [
+                        {
+                            "entity": "813e32aa-d009-4ad3-b5c2-38019c43e635"
+                        }
+                    ],
+                    "halfExtents": {
+                        "x": 8.199999809265137,
+                        "y": 4.099999904632568,
+                        "z": 9.600000381469727
+                    },
+                    "player": "4774e2ca-1417-4d87-acf8-62acc7ea65b7",
+                    "spawns": []
+                },
                 "ObjectInfoComponent": {
                     "hierarchyGroup": "CameraRooms",
-                    "name": "CameraRoomSystem",
+                    "name": "EnemyRoom1",
+                    "tags": [
+                        "Default"
+                    ],
                     "uuid": "5e43321e-d5ae-4096-b336-6990f064122c"
                 },
                 "TransformComponent": {
                     "transform": {
                         "rotate": {
                             "x": 0.0,
-                            "y": 0.0,
+                            "y": -0.0,
                             "z": 0.0
                         },
                         "scale": {
@@ -6278,7 +6736,7 @@
                         "translate": {
                             "x": 14.0,
                             "y": 0.0,
-                            "z": -1.0
+                            "z": -0.6401987075805664
                         }
                     }
                 }

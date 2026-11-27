@@ -16,9 +16,11 @@
 #include "framework/assets/AssetsCoreFramework.h"
 #include <filesystem>
 #include <fstream>
+#include <stdexcept>
 #include <string_view>
 
 #include <imgui.h>
+#include <imgui_stdlib.h>
 #include <algorithm>
 #include <cmath>
 #include <utility>
@@ -114,6 +116,9 @@ void QFE::EDITOR::EditorWindowManager::Initialize(
 	engineConfig_ = config;
 	windowManager_ = &windowManager;
 	sceneManager_ = sceneManager;
+	gameTags_ = { "Default" };
+	if (!QFE::FRAMEWORK::LoadGameInputActions(QFE::FRAMEWORK::ASSETS::GetProjectRoot() / "project.json", gameInputActions_))
+		gameConfigStatus_ = "Input actions could not be loaded; defaults are shown.";
 	projectName_ = QFE::ConvertString(QFE::FRAMEWORK::ASSETS::GetProjectRoot().filename().wstring());
 	try {
 		std::ifstream projectFile(QFE::FRAMEWORK::ASSETS::GetProjectRoot() / "project.json");
@@ -122,17 +127,27 @@ void QFE::EDITOR::EditorWindowManager::Initialize(
 		if (name != project.end() && name->is_string() && !name->get<std::string>().empty()) {
 			projectName_ = name->get<std::string>();
 		}
+		// 設定がない古いプロジェクトでは Default のみを使用する。
+		if (project.contains("game_config") && project["game_config"].is_object() &&
+			project["game_config"].contains("tags") && project["game_config"]["tags"].is_array()) {
+			for (const auto& tag : project["game_config"]["tags"]) {
+				if (!tag.is_string()) continue;
+				const auto value = tag.get<std::string>();
+				if (!value.empty() && std::find(gameTags_.begin(), gameTags_.end(), value) == gameTags_.end())
+					gameTags_.push_back(value);
+			}
+		}
 	} catch (const nlohmann::json::exception&) { }
     EntityManager& entityManager = QFE::FRAMEWORK::GetSceneEntities(*sceneManager);
 	editorWindowsMap_.clear();
 	editorWindowsMap_[EditorWindowType::Hierarchy] = std::make_unique<Hierarchy>(sceneManager, assetManager);
 	editorWindowsMap_[EditorWindowType::Inspector] =
-		std::make_unique<Inspector>(&entityManager, &modelLoader, componentInspectorRegistry);
+		std::make_unique<Inspector>(&entityManager, &modelLoader, componentInspectorRegistry, &gameTags_, &gameInputActions_);
 	editorWindowsMap_[EditorWindowType::AnimationEditor] = std::make_unique<AnimationEditor>(&entityManager);
 	editorWindowsMap_[EditorWindowType::AssetBrowser] = std::make_unique<AssetBrowser>(assetManager, windowManager, *sceneManager);
 	editorWindowsMap_[EditorWindowType::Logger] = std::make_unique<LogWindow>(runtimeLogs_);
 	editorWindowsMap_[EditorWindowType::GameViewer] = std::make_unique<GameViewer>(sceneTextureId, sceneManager, config.windowWidth, config.windowHeight);
-    editorWindowsMap_[EditorWindowType::SceneViewer] = std::make_unique<SceneViewer>(sceneTextureId, sceneManager, modelLoader, config.windowWidth, config.windowHeight);
+    editorWindowsMap_[EditorWindowType::SceneViewer] = std::make_unique<SceneViewer>(sceneTextureId, sceneManager, modelLoader, config.windowWidth, config.windowHeight, componentInspectorRegistry);
 }
 
 void QFE::EDITOR::EditorWindowManager::Update() {
@@ -284,6 +299,7 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList, QFE:
 		// ウィンドウメニュー
         if (ImGui::BeginMenu("Window")) {
 			ImGui::MenuItem("Engine Config", nullptr, &showEngineConfig_);
+			ImGui::MenuItem("Game Config", nullptr, &showGameConfig_);
             for(auto& [type, window] : editorWindowsMap_) {
                 bool isActive = window->GetIsActive();
                 if (ImGui::MenuItem(window->GetWindowName().c_str(), nullptr, isActive)) {
@@ -389,6 +405,117 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList, QFE:
 		ImGui::End();
 	}
 
+	if (showGameConfig_) {
+		ImGui::Begin("Game Config", &showGameConfig_);
+		ImGui::TextUnformatted("Tags");
+		ImGui::TextUnformatted("Default is always available. Save changes to the project.");
+		size_t removeIndex = gameTags_.size();
+		for (size_t i = 0; i < gameTags_.size(); ++i) {
+			ImGui::PushID(static_cast<int>(i));
+			ImGui::TextUnformatted(gameTags_[i].c_str());
+			if (gameTags_[i] != "Default") {
+				ImGui::SameLine();
+				if (ImGui::SmallButton("Remove")) removeIndex = i;
+			}
+			ImGui::PopID();
+		}
+		if (removeIndex < gameTags_.size()) {
+			gameTags_.erase(gameTags_.begin() + static_cast<std::ptrdiff_t>(removeIndex));
+			gameConfigStatus_ = "Unsaved changes. Existing references are preserved.";
+		}
+		ImGui::InputText("New Tag", &newGameTag_);
+		if (ImGui::Button("Add Tag")) {
+			if (newGameTag_.empty() || newGameTag_.find_first_not_of(" \t\r\n") == std::string::npos)
+				gameConfigStatus_ = "Tag cannot be empty.";
+			else if (std::find(gameTags_.begin(), gameTags_.end(), newGameTag_) != gameTags_.end())
+				gameConfigStatus_ = "Tag already exists.";
+			else {
+				gameTags_.push_back(newGameTag_);
+				newGameTag_.clear();
+				gameConfigStatus_ = "Unsaved changes.";
+			}
+		}
+		ImGui::Separator();
+		ImGui::TextUnformatted("Game Input Actions");
+		ImGui::TextDisabled("Bindings apply to the next game launch. Stick directions follow movement actions.");
+		const auto keyNames = QFE::FRAMEWORK::GameInputKeyNames();
+		size_t removeAction = gameInputActions_.size();
+		for (size_t i = 0; i < gameInputActions_.size(); ++i) {
+			auto& action = gameInputActions_[i];
+			ImGui::PushID(static_cast<int>(i));
+			const bool open = ImGui::TreeNode(action.name.c_str());
+			ImGui::SameLine();
+			if (ImGui::SmallButton("Remove")) removeAction = i;
+			if (open) {
+				size_t removeKey = action.keys.size();
+				for (size_t k = 0; k < action.keys.size(); ++k) {
+					ImGui::PushID(static_cast<int>(k));
+					if (ImGui::BeginCombo("Key", action.keys[k].c_str())) {
+						for (const auto& key : keyNames) {
+							if (ImGui::Selectable(key.c_str(), action.keys[k] == key)) {
+								action.keys[k] = key;
+								gameConfigStatus_ = "Unsaved changes.";
+							}
+						}
+						ImGui::EndCombo();
+					}
+					ImGui::SameLine();
+					if (ImGui::SmallButton("Remove Key")) removeKey = k;
+					ImGui::PopID();
+				}
+				if (removeKey < action.keys.size()) { action.keys.erase(action.keys.begin() + static_cast<std::ptrdiff_t>(removeKey)); gameConfigStatus_ = "Unsaved changes."; }
+				if (ImGui::Button("Add Key")) { action.keys.push_back("A"); gameConfigStatus_ = "Unsaved changes."; }
+				const char* mouseOptions[] = { "None", "Left", "Right", "Middle", "Button 4" };
+				int mouseIndex = action.mouseButton + 1;
+				if (ImGui::Combo("Mouse Button", &mouseIndex, mouseOptions, IM_ARRAYSIZE(mouseOptions))) { action.mouseButton = mouseIndex - 1; gameConfigStatus_ = "Unsaved changes."; }
+				static const std::pair<const char*, uint32_t> padOptions[] = {
+					{"None", 0}, {"A", 0x1000}, {"B", 0x2000}, {"X", 0x4000}, {"Y", 0x8000},
+					{"Left Shoulder", 0x0100}, {"Right Shoulder", 0x0200}, {"D-Pad Up", 0x0001},
+					{"D-Pad Down", 0x0002}, {"D-Pad Left", 0x0004}, {"D-Pad Right", 0x0008},
+					{"Start", 0x0010}, {"Back", 0x0020}, {"Left Stick Button", 0x0040}, {"Right Stick Button", 0x0080}
+				};
+				const char* padPreview = "Custom";
+				for (const auto& option : padOptions) if (option.second == action.gamepadButton) padPreview = option.first;
+				if (ImGui::BeginCombo("Gamepad Button", padPreview)) {
+					for (const auto& option : padOptions) if (ImGui::Selectable(option.first, option.second == action.gamepadButton)) { action.gamepadButton = option.second; gameConfigStatus_ = "Unsaved changes."; }
+					ImGui::EndCombo();
+				}
+				ImGui::TreePop();
+			}
+			ImGui::PopID();
+		}
+		if (removeAction < gameInputActions_.size()) { gameInputActions_.erase(gameInputActions_.begin() + static_cast<std::ptrdiff_t>(removeAction)); gameConfigStatus_ = "Unsaved changes. Existing references are preserved."; }
+		ImGui::InputText("New Action", &newInputAction_);
+		if (ImGui::Button("Add Action")) {
+			if (newInputAction_.empty() || newInputAction_.find_first_not_of(" \t\r\n") == std::string::npos) gameConfigStatus_ = "Action name cannot be empty.";
+			else if (std::any_of(gameInputActions_.begin(), gameInputActions_.end(), [&](const auto& item) { return item.name == newInputAction_; })) gameConfigStatus_ = "Action already exists.";
+			else { gameInputActions_.push_back({ newInputAction_ }); newInputAction_.clear(); gameConfigStatus_ = "Unsaved changes."; }
+		}
+		if (ImGui::Button("Save Game Config")) {
+			try {
+				const auto path = QFE::FRAMEWORK::ASSETS::GetProjectRoot() / "project.json";
+				std::ifstream input(path, std::ios::binary);
+				auto project = nlohmann::json::parse(input);
+				input.close();
+				if (!project.is_object() || (project.contains("game_config") && !project["game_config"].is_object()))
+					throw std::runtime_error("Invalid game config");
+				// 他のプロジェクト設定を保持し、タグ一覧だけを書き換える。
+				project["game_config"]["tags"] = gameTags_;
+				auto& actionData = project["game_config"]["inputActions"];
+				actionData = nlohmann::json::array();
+				for (const auto& action : gameInputActions_) actionData.push_back({ {"name", action.name}, {"keys", action.keys}, {"mouseButton", action.mouseButton}, {"gamepadButton", action.gamepadButton} });
+				std::ofstream output(path, std::ios::binary | std::ios::trunc);
+				output << project.dump(4) << '\n';
+				output.close();
+				gameConfigStatus_ = output ? "Saved. Relaunch the game to apply input bindings." : "Failed to save project.json.";
+			} catch (const std::exception&) {
+				gameConfigStatus_ = "Failed to read or save project.json.";
+			}
+		}
+		ImGui::TextUnformatted(gameConfigStatus_.c_str());
+		ImGui::End();
+	}
+
 	if (saveSceneAsRequested) {
 		QueueSceneSave(commandList, true);
 	} else if (saveSceneRequested) {
@@ -409,6 +536,9 @@ void QFE::EDITOR::EditorWindowManager::Draw(EditorCommandList& commandList, QFE:
 		// 非表示の間のドロップを破棄し、再表示後に古いファイルを処理しない。
 		QFE::FRAMEWORK::ConsumeDroppedFiles(*windowManager_);
 	}
+	// 同じ 3D 線を、それぞれの画像領域に ImGui で重ねる。
+	static_cast<SceneViewer*>(editorWindowsMap_[EditorWindowType::SceneViewer].get())->SetDebugLines(&resources.debugLines);
+	static_cast<GameViewer*>(editorWindowsMap_[EditorWindowType::GameViewer].get())->SetDebugLines(&resources.debugLines);
 	for (auto& [type, window] : editorWindowsMap_) {
         if (type == EditorWindowType::Hierarchy || !window->GetIsActive()) {
             continue;
